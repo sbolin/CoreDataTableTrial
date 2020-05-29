@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F96" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Goal" representedClassName="Goal" syncable="YES">
+        <attribute name="goalCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="goalDateCompleted" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="goalDateCreated" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="goalTitle" attributeType="String"/>
+        <relationship name="notes" toMany="YES" deletionRule="Cascade" destinationEntity="Note" inverseName="goal" inverseEntity="Note"/>
+    </entity>
+    <entity name="Note" representedClassName="Note" syncable="YES">
+        <attribute name="noteCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="noteDateCompleted" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="noteDateCreated" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="noteText" attributeType="String"/>
+        <relationship name="goal" maxCount="1" deletionRule="Nullify" destinationEntity="Goal" inverseName="notes" inverseEntity="Goal"/>
+    </entity>
+    <elements>
+        <element name="Note" positionX="-63" positionY="-18" width="128" height="118"/>
+        <element name="Goal" positionX="-280.01171875" positionY="-18.91796875" width="128" height="118"/>
+    </elements>
+</model>

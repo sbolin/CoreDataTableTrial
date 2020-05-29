@@ -12,32 +12,32 @@ import CoreData
 
 
 extension Goal {
-
-    @nonobjc public class func goalFetchRequest() -> NSFetchRequest<Goal> {
-        return NSFetchRequest<Goal>(entityName: "Goal")
-    }
-
-    @NSManaged public var goalCompleted: Bool
-    @NSManaged public var goalDateCompleted: Date?
-    @NSManaged public var goalDateCreated: Date
-    @NSManaged public var goalTitle: String
+  
+  @nonobjc public class func goalFetchRequest() -> NSFetchRequest<Goal> {
+    return NSFetchRequest<Goal>(entityName: "Goal")
+  }
+  
+  @NSManaged public var goalCompleted: Bool
+  @NSManaged public var goalDateCompleted: Date?
+  @NSManaged public var goalDateCreated: Date
+  @NSManaged public var goalTitle: String
   @NSManaged public var notes: Set<Note>
-
+  
 }
 
 // MARK: Generated accessors for notes
 extension Goal {
-
-    @objc(addNotesObject:)
-    @NSManaged public func addToNotes(_ value: Note)
-
-    @objc(removeNotesObject:)
-    @NSManaged public func removeFromNotes(_ value: Note)
-
-    @objc(addNotes:)
+  
+  @objc(addNotesObject:)
+  @NSManaged public func addToNotes(_ value: Note)
+  
+  @objc(removeNotesObject:)
+  @NSManaged public func removeFromNotes(_ value: Note)
+  
+  @objc(addNotes:)
   @NSManaged public func addToNotes(_ values: Set<Note>)
-
-    @objc(removeNotes:)
+  
+  @objc(removeNotes:)
   @NSManaged public func removeFromNotes(_ values: Set<Note>)
-
+  
 }

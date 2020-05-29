@@ -42,11 +42,22 @@ class NoteCell: UITableViewCell {
     noteTextLabel.text = goal.value(forKeyPath: #keyPath(Goal.notes.noteText)) as? String
     dayCreatedLabel.text = dayFormatter.string(from: goal.goalDateCreated)
     monthCreatedLabel.text = monthFormatter.string(from: goal.goalDateCreated)
-    handleCompletionCheck(is: goal.goalCompleted)
+    completedButton.isSelected = goal.goalCompleted
+    toggleButtonColor()
   }
   
-  func handleCompletionCheck(is completed: Bool) {
+  func toggleButtonColor() {
+    if completedButton.isSelected {
+      completedButton.tintColor = .systemGreen
+    } else {
+      completedButton.tintColor = .systemGray6
+    }
+  }
+  
+  func handleCompletionCheck(for goal: Goal) {
+    let completed = completedButton.isSelected
     if completed {
+      CoreDataController.sharedManager.markGoalCompleted(completed: completed, goal: goal)
       completedButton.tintColor = .systemGreen
     } else {
       completedButton.tintColor = .systemGray6
@@ -56,8 +67,8 @@ class NoteCell: UITableViewCell {
   //MARK: - IBAction
   @IBAction func completedTapped(_ sender: UIButton) {
     completedButton.isSelected.toggle()
-    let completion = completedButton.isSelected
-    handleCompletionCheck(is: completion)
-    delegate?.noteCell(self, completionChanged: completion)
+    toggleButtonColor()
+    // update data model
+    delegate?.noteCell(self, completionChanged: completedButton.isSelected)
   }
 }

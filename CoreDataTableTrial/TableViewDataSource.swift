@@ -62,7 +62,7 @@ class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataS
 //    guard let fetchedIndexPath = delegate.fetchedIndexPath(for: indexPath) else {
 //      return delegate.supplementaryObject(at: indexPath)!
 //    }
-//    return (fetchedResultsController.object(at: fetchedIndexPath) as! Object)
+//    return (fetchedGoalResultsController.object(at: fetchedIndexPath) as! Object)
 //  }
   
   //MARK: - UITableViewDataSource methods
@@ -95,7 +95,7 @@ class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataS
 
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     guard let sections = self.fetchedResultsController?.sections else {
-      fatalError("No sections in fetchedResultsController")
+      fatalError("No sections in fetchedGoalResultsController")
     }
     let sectionInfo = sections[section]
     return sectionInfo.numberOfObjects
@@ -114,7 +114,7 @@ class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataS
   /*
   //MARK: - Helper methods
   func configureCell(_ cell: UITableViewCell, at indexPath: IndexPath) {
-    let note = CoreDataController.sharedManager.fetchedResultsController.object(at: indexPath)
+    let note = CoreDataController.sharedManager.fetchedGoalResultsController.object(at: indexPath)
     
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "dd-mmm-yyyy"
@@ -202,21 +202,42 @@ class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataS
 }
 
 extension TableViewDataSource: NoteCellDelegate {
+  
   func noteCell(_ cell: NoteCell, completionChanged completion: Bool) {
     print("in TableViewDataSource: noteCell, completion: \(completion)")
-    guard let indexPath = tableView.indexPath(for: cell) else { fatalError("Index path should not be nil")}
-    let goal = CoreDataController.sharedManager.fetchedResultsController.object(at: indexPath)
-    goal.goalCompleted = completion
-    let notes = goal.notes
-    notes.forEach { (note) in
-      note.noteCompleted = completion
+    let context = CoreDataController.sharedManager.persistentContainer.viewContext
+    // standard method
+//    guard let indexPath = tableView.indexPath(for: cell) else { fatalError("Index path should not be nil")}
+//    let goal = CoreDataController.sharedManager.fetchedGoalResultsController.object(at: indexPath)
+    
+    // alt method
+    guard let indexPath = tableView.indexPathForSelectedRow else { return }
+    let goal = CoreDataController.sharedManager.fetchedGoalResultsController.object(at: indexPath)
+    let note = CoreDataController.sharedManager.fetchedNoteResultsController.object(at: indexPath)
+    
+    CoreDataController.sharedManager.markGoalCompleted(completed: completion, goal: goal)
+    CoreDataController.sharedManager.markNoteCompleted(completed: completion, note: note)
+
+    /*
+     goal.goalCompleted = completion
+     let notes = goal.notes
+     notes.forEach { (note) in
+       note.noteCompleted = completion
+     }
+     if completion {
+       goal.goalDateCompleted = Date()
+       notes.forEach { (note) in
+         note.noteDateCompleted = Date()
+       }
+     }
+     */
+    
+    do {
+    try context.save()
+    } catch {
+      print("Could not save updated completion state")
     }
-    if completion {
-      goal.goalDateCompleted = Date()
-      notes.forEach { (note) in
-        note.noteDateCompleted = Date()
-      }
-    }
-    CoreDataController.sharedManager.saveContext()
   }
 }
+
+

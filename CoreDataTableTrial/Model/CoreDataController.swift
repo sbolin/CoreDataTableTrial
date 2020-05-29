@@ -11,7 +11,7 @@ import CoreData
 
 class CoreDataController {
   
-  static let sharedManager = CoreDataController()
+  static let sharedManager = CoreDataController() // singleton
   private init() {} // Prevent clients from creating another instance.
   
   lazy var persistentContainer: NSPersistentContainer = {
@@ -38,18 +38,33 @@ class CoreDataController {
   }()
   
   // Fetch methods
-  lazy var fetchedResultsController: NSFetchedResultsController<Goal> = {
+  lazy var fetchedGoalResultsController: NSFetchedResultsController<Goal> = {
     let context = persistentContainer.viewContext
     let request = Goal.goalFetchRequest()
     let goalSort = NSSortDescriptor(key: "goalTitle", ascending: true)
     let createdSort = NSSortDescriptor(key: "goalDateCreated", ascending: true)
     request.sortDescriptors = [goalSort, createdSort]
-    request.fetchLimit = 0 // reset to default count
     
     let fetchedResultsController = NSFetchedResultsController(
       fetchRequest: request,
       managedObjectContext: context,
       sectionNameKeyPath: "goalTitle",
+      cacheName: nil)
+    
+    return fetchedResultsController
+  }()
+  
+  lazy var fetchedNoteResultsController: NSFetchedResultsController<Note> = {
+    let context = persistentContainer.viewContext
+    let request = Note.noteFetchRequest()
+    let goalSort = NSSortDescriptor(key: "goal.goalTitle", ascending: true)
+    let createdSort = NSSortDescriptor(key: "noteDateCreated", ascending: true)
+    request.sortDescriptors = [goalSort, createdSort]
+    
+    let fetchedResultsController = NSFetchedResultsController(
+      fetchRequest: request,
+      managedObjectContext: context,
+      sectionNameKeyPath: "goal.goalTitle",
       cacheName: nil)
     
     return fetchedResultsController
@@ -80,7 +95,7 @@ class CoreDataController {
     note.noteDateCreated = Date()
     note.noteCompleted = false
     goal.addToNotes(note)
-//    note.goal = goal
+    //    note.goal = goal
     saveContext()
     return goal
   }
@@ -91,29 +106,35 @@ class CoreDataController {
     let note = Note(context: context)
     goal.goalTitle = title
     note.noteText = noteText
-
+    
     goal.addToNotes(note)
-//    goal.mutableSetValue(forKeyPath: #keyPath(Goal.notes.noteText)).add(noteText) // had been forKey
+    //    goal.mutableSetValue(forKeyPath: #keyPath(Goal.notes.noteText)).add(noteText) // had been forKey
     saveContext()
   }
   
   //Mark Goal Completed
-  func markGoalCompleted(title: String, completed: Bool, dateCompleted: Date, goal: Goal) {
-    print("func markNoteCompleted")
-  //  let context = CoreDataController.sharedManager.persistentContainer.viewContext
+  func markGoalCompleted(completed: Bool, goal: Goal) {
+    print("func markGoalCompleted")
+    //  let context = CoreDataController.sharedManager.persistentContainer.viewContext
     
-    goal.goalTitle = title
     goal.goalCompleted = completed
-    goal.goalDateCompleted =  dateCompleted
-    let notes = goal.notes    
-//    goal.mutableSetValue(forKey: "notes").add(note)
-    
+    goal.goalDateCompleted =  Date()
+    let notes = goal.notes
     notes.forEach { item in
       item.noteCompleted = completed
-      item.noteDateCompleted = dateCompleted
+      item.noteDateCompleted = Date()
     }
     saveContext()
   }
+  
+  //Mark Note Completed
+  func markNoteCompleted(completed: Bool, note: Note) {
+    print("func markNoteCompleted")
+    note.noteCompleted = completed
+    note.noteDateCompleted = Date()
+    saveContext()
+  }
+  
   
   //Delete Goal
   func deleteGoal(goal: Goal) {

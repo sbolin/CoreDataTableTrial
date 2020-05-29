@@ -30,7 +30,7 @@ class ViewController: UIViewController {
   
   func setupTableView() {
     if fetchedResultsController == nil {
-      fetchedResultsController = CoreDataController.sharedManager.fetchedResultsController
+      fetchedResultsController = CoreDataController.sharedManager.fetchedGoalResultsController
     }
     fetchedResultsController.fetchRequest.predicate = goalPredicate
     do {
@@ -118,6 +118,7 @@ class ViewController: UIViewController {
     })
     
     ac.addAction(UIAlertAction(title: "Show all notes", style: .default) { [unowned self] _ in
+      self.fetchedResultsController.fetchRequest.fetchLimit = 0
       self.goalPredicate = nil
       self.setupTableView()
     })

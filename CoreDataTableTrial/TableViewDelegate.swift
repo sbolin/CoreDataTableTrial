@@ -11,7 +11,7 @@ import CoreData
 
 class TableViewDelegate: NSObject, UITableViewDelegate {
   
-  let fetchController = CoreDataController.sharedManager.fetchedResultsController
+  let fetchController = CoreDataController.sharedManager.fetchedGoalResultsController
   
   //MARK: - UITableViewDelegate Methods
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

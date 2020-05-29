@@ -41,8 +41,8 @@ class CoreDataController {
   lazy var fetchedGoalResultsController: NSFetchedResultsController<Goal> = {
     let context = persistentContainer.viewContext
     let request = Goal.goalFetchRequest()
-    let goalSort = NSSortDescriptor(key: "goalTitle", ascending: true)
-    let createdSort = NSSortDescriptor(key: "goalDateCreated", ascending: true)
+    let goalSort = NSSortDescriptor(keyPath: \Goal.goalTitle, ascending: true)
+    let createdSort = NSSortDescriptor(keyPath: \Goal.goalDateCreated, ascending: false)
     request.sortDescriptors = [goalSort, createdSort]
     
     let fetchedResultsController = NSFetchedResultsController(
@@ -57,8 +57,8 @@ class CoreDataController {
   lazy var fetchedNoteResultsController: NSFetchedResultsController<Note> = {
     let context = persistentContainer.viewContext
     let request = Note.noteFetchRequest()
-    let goalSort = NSSortDescriptor(key: "goal.goalTitle", ascending: true)
-    let createdSort = NSSortDescriptor(key: "noteDateCreated", ascending: true)
+    let goalSort = NSSortDescriptor(keyPath: \Note.goal.goalTitle, ascending: true)
+    let createdSort = NSSortDescriptor(keyPath: \Note.noteDateCreated, ascending: false)
     request.sortDescriptors = [goalSort, createdSort]
     
     let fetchedResultsController = NSFetchedResultsController(
@@ -97,6 +97,10 @@ class CoreDataController {
     goal.addToNotes(note)
     //    note.goal = goal
     saveContext()
+    
+    NSLog("New Goal: %@", goal)
+    NSLog("New Note: %@", note)
+    
     return goal
   }
   
@@ -109,6 +113,10 @@ class CoreDataController {
     
     goal.addToNotes(note)
     //    goal.mutableSetValue(forKeyPath: #keyPath(Goal.notes.noteText)).add(noteText) // had been forKey
+    
+    NSLog("Update Goal: %@", goal)
+    NSLog("Update Note: %@", note)
+    
     saveContext()
   }
   
@@ -124,6 +132,10 @@ class CoreDataController {
       item.noteCompleted = completed
       item.noteDateCompleted = Date()
     }
+    
+    NSLog("Mark Goal Completed Goal: %@", goal)
+    NSLog("Mark Goal Completed Note: %@", notes)
+    
     saveContext()
   }
   
@@ -132,6 +144,9 @@ class CoreDataController {
     print("func markNoteCompleted")
     note.noteCompleted = completed
     note.noteDateCompleted = Date()
+    
+    NSLog("Mark Note Completed Note: %@", note)
+    
     saveContext()
   }
   
@@ -165,7 +180,8 @@ class CoreDataController {
     
     // check if notes exist, if so return
     let context = persistentContainer.viewContext
-    let fetchRequest = Goal.goalFetchRequest()
+//    let fetchRequest = Goal.goalFetchRequest()
+    let fetchRequest = Note.noteFetchRequest()
     let count = try! context.count(for: fetchRequest)
     
     guard count == 0 else { return }

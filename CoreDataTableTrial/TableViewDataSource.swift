@@ -33,12 +33,13 @@ class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataS
   
   // MARK:- Private Parameters
   fileprivate let tableView: UITableView
-  fileprivate var fetchedResultsController: NSFetchedResultsController<Goal>?
+//  fileprivate var fetchedResultsController: NSFetchedResultsController<Goal>?
+  fileprivate var fetchedResultsController: NSFetchedResultsController<Note>?
   fileprivate weak var delegate: Delegate!
   fileprivate let cellIdentifier: String
   
   //MARK: - Initializer
-  required init(tableView: UITableView, cellIdentifier: String, fetchedResultsController: NSFetchedResultsController<Goal>, delegate: Delegate) {
+  required init(tableView: UITableView, cellIdentifier: String, fetchedResultsController: NSFetchedResultsController<Note>, delegate: Delegate) { // change <Goal> to <Note>
     self.tableView = tableView
     self.cellIdentifier = cellIdentifier
     self.fetchedResultsController = fetchedResultsController
@@ -202,7 +203,6 @@ class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataS
 }
 
 extension TableViewDataSource: NoteCellDelegate {
-  
   func noteCell(_ cell: NoteCell, completionChanged completion: Bool) {
     print("in TableViewDataSource: noteCell, completion: \(completion)")
     let context = CoreDataController.sharedManager.persistentContainer.viewContext

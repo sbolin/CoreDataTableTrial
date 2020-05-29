@@ -81,7 +81,6 @@ class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataS
     }
     return sectionInfo.name
   }
-  
 
   func sectionIndexTitles(for tableView: UITableView) -> [String]? {
     return self.fetchedResultsController?.sectionIndexTitles
@@ -204,8 +203,7 @@ class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataS
 
 extension TableViewDataSource: NoteCellDelegate {
   func noteCell(_ cell: NoteCell, completionChanged completion: Bool) {
-    print("in TableViewDataSource: noteCell, completion: \(completion)")
-    let context = CoreDataController.sharedManager.persistentContainer.viewContext
+    print("in TableViewDataSource: noteCell \(cell), completion: \(completion)")
     // standard method
 //    guard let indexPath = tableView.indexPath(for: cell) else { fatalError("Index path should not be nil")}
 //    let goal = CoreDataController.sharedManager.fetchedGoalResultsController.object(at: indexPath)
@@ -232,11 +230,7 @@ extension TableViewDataSource: NoteCellDelegate {
      }
      */
     
-    do {
-    try context.save()
-    } catch {
-      print("Could not save updated completion state")
-    }
+    CoreDataController.sharedManager.saveContext()
   }
 }
 

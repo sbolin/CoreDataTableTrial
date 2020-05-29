@@ -11,43 +11,50 @@ import CoreData
 
 class TableViewDelegate: NSObject, UITableViewDelegate {
   
-  let fetchController = CoreDataController.sharedManager.fetchedGoalResultsController
-  
+//  let fetchController = CoreDataController.sharedManager.fetchedGoalResultsController
+  let fetchController = CoreDataController.sharedManager.fetchedNoteResultsController
+
   //MARK: - UITableViewDelegate Methods
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    return 64
+    return 56
+  }
+  
+  func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    return 36
   }
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
     print("didSelectRowAt called at \(indexPath.row)")
     
-    let goal = fetchController.object(at: indexPath)
+    let note = fetchController.object(at: indexPath)
+    let goal = note.goal
     
+    print("didSelectRowAt Note object: \(note)")
     print("didSelectRowAt Goal object: \(goal)")
-    
+
     let alert = UIAlertController(title: "Update Goal",
                                   message: "Update Goal Contents",
                                   preferredStyle: .alert)
     
     alert.addTextField { (textFieldNoteTitle) in
       textFieldNoteTitle.placeholder = "Goal Title"
-      textFieldNoteTitle.text = goal.value(forKeyPath: #keyPath(Goal.goalTitle)) as? String
+      textFieldNoteTitle.text = goal.goalTitle
     }
     alert.addTextField { (textFieldAttachment) in
       textFieldAttachment.placeholder = "Goal Contents"
-      textFieldAttachment.text = goal.value(forKeyPath: #keyPath(Goal.notes.noteText)) as? String
+      textFieldAttachment.text = note.noteText
       //UPDATE
       let updateAction = UIAlertAction(title: "Update", style: .default) { [unowned self] action in
         guard let textFieldTitle = alert.textFields?[0],
-          let goalToSave = textFieldTitle.text else {
+          let goalTitleToSave = textFieldTitle.text else {
             return
         }
         guard let textFieldnoteText = alert.textFields?[1],
           let noteTextToSave = textFieldnoteText.text else {
             return
         }
-        self.update(goalTitle: goalToSave, noteText: noteTextToSave, goalToUpdate: goal, at: indexPath)
+        self.update(goalTitle: goalTitleToSave, noteText: noteTextToSave, at: indexPath)
       }
       
       //DELETE
@@ -66,9 +73,9 @@ class TableViewDelegate: NSObject, UITableViewDelegate {
     }
   }
   
-  func update(goalTitle: String, noteText: String, goalToUpdate: Goal, at indexPath: IndexPath) {
+  func update(goalTitle: String, noteText: String, at indexPath: IndexPath) {
     print("update goal from TableViewDelegate")
-    CoreDataController.sharedManager.updateGoal(title: goalTitle, noteText: noteText, goal: goalToUpdate, at: indexPath)
+    CoreDataController.sharedManager.updateGoal(updatedGoalTitle: goalTitle, updatedNoteText: noteText, at: indexPath)
   }
   
   func deleteGoal(goalToDelete: Goal) {

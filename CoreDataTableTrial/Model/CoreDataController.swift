@@ -104,16 +104,13 @@ class CoreDataController {
     return goal
   }
   
-  func updateGoal(title: String, noteText: String, goal: Goal, at indexPath: IndexPath) {
-    print("func updateGoal: Title: \(title), Text: \(noteText)")
-    let context = CoreDataController.sharedManager.persistentContainer.viewContext
-    let note = Note(context: context)
-    goal.goalTitle = title
-    note.noteText = noteText
-    
-    goal.addToNotes(note)
-    //    goal.mutableSetValue(forKeyPath: #keyPath(Goal.notes.noteText)).add(noteText) // had been forKey
-    
+  func updateGoal(updatedGoalTitle: String, updatedNoteText: String, at indexPath: IndexPath) {
+    print("func updateGoal: Title: \(updatedGoalTitle), Text: \(updatedNoteText)")
+    let note = fetchedNoteResultsController.object(at: indexPath)
+    note.noteText = updatedNoteText
+    let goal = note.goal
+    goal.goalTitle = updatedGoalTitle
+        
     NSLog("Update Goal: %@", goal)
     NSLog("Update Note: %@", note)
     

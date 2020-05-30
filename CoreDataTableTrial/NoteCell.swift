@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol NoteCellDelegate {
+protocol NoteCellDelegate: class {
   func noteCell(_ cell: NoteCell, completionChanged completion: Bool)
 }
 
@@ -16,7 +16,7 @@ class NoteCell: UITableViewCell {
   
   //MARK:- Properties
   public static let reuseIdentifier = "NoteCell"
-  var delegate: NoteCellDelegate?
+  weak var noteCellDelegate: NoteCellDelegate?
   
   //MARK: - IBOutlets
   @IBOutlet weak var goalTitleLabel: UILabel!
@@ -32,19 +32,14 @@ class NoteCell: UITableViewCell {
   }
   
   //MARK: - Helper function
-//  func configure(for goal: Goal) {
-  func configure(for note: Note) {
+  func configureNoteCell(for note: Note) {
+    
+    NSLog("In NoteCell: configure(for note:), %@", note)
+    
     let dayFormatter = DateFormatter()
     let monthFormatter = DateFormatter()
     dayFormatter.dateFormat = "dd"
     monthFormatter.dateFormat = "MMM"
-/*
-    goalTitleLabel.text = goal.goalTitle
-    noteTextLabel.text = goal.value(forKeyPath: #keyPath(Goal.notes.noteText)) as? String
-    dayCreatedLabel.text = dayFormatter.string(from: goal.goalDateCreated)
-    monthCreatedLabel.text = monthFormatter.string(from: goal.goalDateCreated)
-    completedButton.isSelected = goal.goalCompleted
-*/
     goalTitleLabel.text = note.goal.goalTitle
     noteTextLabel.text = note.noteText
     dayCreatedLabel.text = dayFormatter.string(from: note.noteDateCreated)
@@ -55,24 +50,9 @@ class NoteCell: UITableViewCell {
   }
   
   func toggleButtonColor() {
-    if completedButton.isSelected {
-      completedButton.tintColor = .systemGreen
-    } else {
-      completedButton.tintColor = .systemGray6
-    }
+    completedButton.isSelected ? (completedButton.tintColor = .systemGreen) :
+     (completedButton.tintColor = .systemGray6)
   }
-  
-  /*
-  func handleCompletionCheck(for goal: Goal) {
-    let completed = completedButton.isSelected
-    if completed {
-      CoreDataController.sharedManager.markGoalCompleted(completed: completed, goal: goal)
-      completedButton.tintColor = .systemGreen
-    } else {
-      completedButton.tintColor = .systemGray6
-    }
-  }
- */
   
   func handleCompletionCheck(for note: Note) {
     let completed = completedButton.isSelected
@@ -86,11 +66,12 @@ class NoteCell: UITableViewCell {
   
   //MARK: - IBAction
   @IBAction func completedTapped(_ sender: UIButton) {
+    print("completedButton Clicked")
     completedButton.isSelected.toggle()
     toggleButtonColor()
     // update data model
     print("In NoteCell, calling noteCell delegate method")
-    delegate?.noteCell(self, completionChanged: completedButton.isSelected)
+    noteCellDelegate?.noteCell(self, completionChanged: completedButton.isSelected)
     print("...after delegate call")
   }
 }

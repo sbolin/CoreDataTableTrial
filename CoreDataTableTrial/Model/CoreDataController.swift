@@ -72,7 +72,7 @@ class CoreDataController {
   
   func saveContext () {
     print("func saveContext")
-    let context = CoreDataController.sharedManager.persistentContainer.viewContext
+    let context = persistentContainer.viewContext
     guard context.hasChanges else { return }
     do {
       try context.save()
@@ -81,10 +81,21 @@ class CoreDataController {
     }
   }
   
+  //Add new Note
+  func addNote(text: String, at indexPath: IndexPath) {
+    let context = persistentContainer.viewContext
+    let goal = fetchedGoalResultsController.object(at: indexPath)
+    let note = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
+    note.noteText = text
+    note.noteDateCreated = Date()
+    note.noteCompleted = false
+    note.goal = goal
+  }
+  
   //Add new Goal
   func addGoal(title: String, noteText: String) -> Goal? {
-    print("\nfunc addNote: Title: \(title), Text: \(noteText)")
-    let context = CoreDataController.sharedManager.persistentContainer.viewContext
+    print("\nfunc addGoal: Title: \(title), Text: \(noteText)")
+    let context = persistentContainer.viewContext
     let goal = Goal(context: context)
     let note = Note(context: context)
     

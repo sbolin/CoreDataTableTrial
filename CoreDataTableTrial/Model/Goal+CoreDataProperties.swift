@@ -21,7 +21,7 @@ extension Goal {
   @NSManaged public var goalDateCompleted: Date?
   @NSManaged public var goalDateCreated: Date
   @NSManaged public var goalTitle: String
-  @NSManaged public var notes: Set<Note>
+  @NSManaged public var notes: Set<Note> //NSSet
   
 }
 

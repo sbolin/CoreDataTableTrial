@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		151A3FDC248250EF005815AE /* GoalCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151A3FDB248250EF005815AE /* GoalCell.swift */; };
+		151A3FDE24826969005815AE /* GoalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151A3FDD24826969005815AE /* GoalViewController.swift */; };
 		157A9580247A6DFB0010AD9C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A957F247A6DFB0010AD9C /* AppDelegate.swift */; };
 		157A9582247A6DFB0010AD9C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A9581247A6DFB0010AD9C /* SceneDelegate.swift */; };
-		157A9584247A6DFB0010AD9C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A9583247A6DFB0010AD9C /* ViewController.swift */; };
+		157A9584247A6DFB0010AD9C /* NoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A9583247A6DFB0010AD9C /* NoteViewController.swift */; };
 		157A9587247A6DFB0010AD9C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 157A9585247A6DFB0010AD9C /* Main.storyboard */; };
 		157A9589247A6DFF0010AD9C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 157A9588247A6DFF0010AD9C /* Assets.xcassets */; };
 		157A958C247A6DFF0010AD9C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 157A958A247A6DFF0010AD9C /* LaunchScreen.storyboard */; };
@@ -25,10 +27,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		151A3FDB248250EF005815AE /* GoalCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCell.swift; sourceTree = "<group>"; };
+		151A3FDD24826969005815AE /* GoalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalViewController.swift; sourceTree = "<group>"; };
 		157A957C247A6DFB0010AD9C /* CoreDataTableTrial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreDataTableTrial.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		157A957F247A6DFB0010AD9C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		157A9581247A6DFB0010AD9C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		157A9583247A6DFB0010AD9C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		157A9583247A6DFB0010AD9C /* NoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewController.swift; sourceTree = "<group>"; };
 		157A9586247A6DFB0010AD9C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		157A9588247A6DFF0010AD9C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		157A958B247A6DFF0010AD9C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -75,10 +79,12 @@
 			isa = PBXGroup;
 			children = (
 				157A959E247A71010010AD9C /* Model */,
-				157A9583247A6DFB0010AD9C /* ViewController.swift */,
+				157A9583247A6DFB0010AD9C /* NoteViewController.swift */,
+				151A3FDD24826969005815AE /* GoalViewController.swift */,
 				157A95B1247AD6DA0010AD9C /* TableViewDataSource.swift */,
 				157A95B3247AD8FC0010AD9C /* TableViewDelegate.swift */,
 				15D63907247E8DFA00662AE1 /* NoteCell.swift */,
+				151A3FDB248250EF005815AE /* GoalCell.swift */,
 				157A9581247A6DFB0010AD9C /* SceneDelegate.swift */,
 				157A957F247A6DFB0010AD9C /* AppDelegate.swift */,
 				157A9585247A6DFB0010AD9C /* Main.storyboard */,
@@ -174,11 +180,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				157A95AC247A75370010AD9C /* Note+CoreDataProperties.swift in Sources */,
+				151A3FDC248250EF005815AE /* GoalCell.swift in Sources */,
 				157A95AE247A75370010AD9C /* Goal+CoreDataProperties.swift in Sources */,
 				157A95AD247A75370010AD9C /* Goal+CoreDataClass.swift in Sources */,
 				15D63908247E8DFA00662AE1 /* NoteCell.swift in Sources */,
 				157A95B0247A77E90010AD9C /* CoreDataController.swift in Sources */,
-				157A9584247A6DFB0010AD9C /* ViewController.swift in Sources */,
+				157A9584247A6DFB0010AD9C /* NoteViewController.swift in Sources */,
+				151A3FDE24826969005815AE /* GoalViewController.swift in Sources */,
 				157A9580247A6DFB0010AD9C /* AppDelegate.swift in Sources */,
 				157A95B2247AD6DA0010AD9C /* TableViewDataSource.swift in Sources */,
 				157A9582247A6DFB0010AD9C /* SceneDelegate.swift in Sources */,

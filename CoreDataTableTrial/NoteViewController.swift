@@ -12,8 +12,8 @@ import CoreData
 class NoteViewController: UIViewController {
   
   //MARK: - Properties
-  let delegate = TableViewDelegate()
-  var dataSource: TableViewDataSource<Note, NoteViewController>!
+  let delegate = NoteViewDelegate()
+  var dataSource: NoteViewDataSource<Note, NoteViewController>!
   var fetchedResultsController: NSFetchedResultsController<Note>!
   var predicate: NSPredicate?
   
@@ -40,7 +40,7 @@ class NoteViewController: UIViewController {
     } catch {
       print("Fetch failed")
     }
-    dataSource = TableViewDataSource(tableView: tableView, fetchedResultsController: fetchedResultsController, delegate: self)
+    dataSource = NoteViewDataSource(tableView: tableView, fetchedResultsController: fetchedResultsController, delegate: self)
   }
   
   //MARK: - IBActions
@@ -77,7 +77,6 @@ class NoteViewController: UIViewController {
       self.predicate = NSPredicate(format: "(noteCompleted == true)")
       self.setupTableView()
     })
-    
     ac.addAction(UIAlertAction(title: "Show today", style: .default) { [unowned self ] _ in
       self.predicate = nil
       self.fetchedResultsController.fetchRequest.fetchLimit = 0
@@ -154,7 +153,7 @@ class NoteViewController: UIViewController {
 }
 
 //MARK: - Delegate Methods
-extension NoteViewController: TableViewDataSourceDelegate {
+extension NoteViewController: NoteViewDataSourceDelegate {
   func configureGoalCell(_ cell: GoalCell, for object: Goal) {
     print("In NoteViewController: configureGoalCell")
 

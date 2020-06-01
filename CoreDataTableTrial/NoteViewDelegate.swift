@@ -1,5 +1,5 @@
 //
-//  TableViewDelegate.swift
+//  NoteViewDelegate.swift
 //  CoreDataTableTrial
 //
 //  Created by Scott Bolin on 5/24/20.
@@ -9,9 +9,8 @@
 import UIKit
 import CoreData
 
-class TableViewDelegate: NSObject, UITableViewDelegate {
+class NoteViewDelegate: NSObject, UITableViewDelegate {
   
-//  let fetchController = CoreDataController.sharedManager.fetchedGoalResultsController
   let fetchController = CoreDataController.sharedManager.fetchedNoteResultsController
 
   //MARK: - UITableViewDelegate Methods

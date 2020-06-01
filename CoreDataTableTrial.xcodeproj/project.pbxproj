@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		151A3FDC248250EF005815AE /* GoalCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151A3FDB248250EF005815AE /* GoalCell.swift */; };
 		151A3FDE24826969005815AE /* GoalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151A3FDD24826969005815AE /* GoalViewController.swift */; };
+		151A3FE024850BA4005815AE /* GoalViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151A3FDF24850BA4005815AE /* GoalViewDataSource.swift */; };
+		151A3FE224850FEF005815AE /* GoalViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151A3FE124850FEF005815AE /* GoalViewDelegate.swift */; };
 		157A9580247A6DFB0010AD9C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A957F247A6DFB0010AD9C /* AppDelegate.swift */; };
 		157A9582247A6DFB0010AD9C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A9581247A6DFB0010AD9C /* SceneDelegate.swift */; };
 		157A9584247A6DFB0010AD9C /* NoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A9583247A6DFB0010AD9C /* NoteViewController.swift */; };
@@ -21,14 +23,16 @@
 		157A95AD247A75370010AD9C /* Goal+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A95A9247A75370010AD9C /* Goal+CoreDataClass.swift */; };
 		157A95AE247A75370010AD9C /* Goal+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A95AA247A75370010AD9C /* Goal+CoreDataProperties.swift */; };
 		157A95B0247A77E90010AD9C /* CoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A95AF247A77E90010AD9C /* CoreDataController.swift */; };
-		157A95B2247AD6DA0010AD9C /* TableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A95B1247AD6DA0010AD9C /* TableViewDataSource.swift */; };
-		157A95B4247AD8FC0010AD9C /* TableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A95B3247AD8FC0010AD9C /* TableViewDelegate.swift */; };
+		157A95B2247AD6DA0010AD9C /* NoteViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A95B1247AD6DA0010AD9C /* NoteViewDataSource.swift */; };
+		157A95B4247AD8FC0010AD9C /* NoteViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A95B3247AD8FC0010AD9C /* NoteViewDelegate.swift */; };
 		15D63908247E8DFA00662AE1 /* NoteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D63907247E8DFA00662AE1 /* NoteCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		151A3FDB248250EF005815AE /* GoalCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCell.swift; sourceTree = "<group>"; };
 		151A3FDD24826969005815AE /* GoalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalViewController.swift; sourceTree = "<group>"; };
+		151A3FDF24850BA4005815AE /* GoalViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalViewDataSource.swift; sourceTree = "<group>"; };
+		151A3FE124850FEF005815AE /* GoalViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalViewDelegate.swift; sourceTree = "<group>"; };
 		157A957C247A6DFB0010AD9C /* CoreDataTableTrial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreDataTableTrial.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		157A957F247A6DFB0010AD9C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		157A9581247A6DFB0010AD9C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -43,8 +47,8 @@
 		157A95A9247A75370010AD9C /* Goal+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Goal+CoreDataClass.swift"; sourceTree = "<group>"; };
 		157A95AA247A75370010AD9C /* Goal+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Goal+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		157A95AF247A77E90010AD9C /* CoreDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataController.swift; sourceTree = "<group>"; };
-		157A95B1247AD6DA0010AD9C /* TableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewDataSource.swift; sourceTree = "<group>"; };
-		157A95B3247AD8FC0010AD9C /* TableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewDelegate.swift; sourceTree = "<group>"; };
+		157A95B1247AD6DA0010AD9C /* NoteViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewDataSource.swift; sourceTree = "<group>"; };
+		157A95B3247AD8FC0010AD9C /* NoteViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewDelegate.swift; sourceTree = "<group>"; };
 		15D63907247E8DFA00662AE1 /* NoteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -80,10 +84,12 @@
 			children = (
 				157A959E247A71010010AD9C /* Model */,
 				157A9583247A6DFB0010AD9C /* NoteViewController.swift */,
-				151A3FDD24826969005815AE /* GoalViewController.swift */,
-				157A95B1247AD6DA0010AD9C /* TableViewDataSource.swift */,
-				157A95B3247AD8FC0010AD9C /* TableViewDelegate.swift */,
+				157A95B1247AD6DA0010AD9C /* NoteViewDataSource.swift */,
+				157A95B3247AD8FC0010AD9C /* NoteViewDelegate.swift */,
 				15D63907247E8DFA00662AE1 /* NoteCell.swift */,
+				151A3FDD24826969005815AE /* GoalViewController.swift */,
+				151A3FDF24850BA4005815AE /* GoalViewDataSource.swift */,
+				151A3FE124850FEF005815AE /* GoalViewDelegate.swift */,
 				151A3FDB248250EF005815AE /* GoalCell.swift */,
 				157A9581247A6DFB0010AD9C /* SceneDelegate.swift */,
 				157A957F247A6DFB0010AD9C /* AppDelegate.swift */,
@@ -180,6 +186,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				157A95AC247A75370010AD9C /* Note+CoreDataProperties.swift in Sources */,
+				151A3FE024850BA4005815AE /* GoalViewDataSource.swift in Sources */,
 				151A3FDC248250EF005815AE /* GoalCell.swift in Sources */,
 				157A95AE247A75370010AD9C /* Goal+CoreDataProperties.swift in Sources */,
 				157A95AD247A75370010AD9C /* Goal+CoreDataClass.swift in Sources */,
@@ -188,10 +195,11 @@
 				157A9584247A6DFB0010AD9C /* NoteViewController.swift in Sources */,
 				151A3FDE24826969005815AE /* GoalViewController.swift in Sources */,
 				157A9580247A6DFB0010AD9C /* AppDelegate.swift in Sources */,
-				157A95B2247AD6DA0010AD9C /* TableViewDataSource.swift in Sources */,
+				151A3FE224850FEF005815AE /* GoalViewDelegate.swift in Sources */,
+				157A95B2247AD6DA0010AD9C /* NoteViewDataSource.swift in Sources */,
 				157A9582247A6DFB0010AD9C /* SceneDelegate.swift in Sources */,
 				157A9595247A6E5D0010AD9C /* Model.xcdatamodeld in Sources */,
-				157A95B4247AD8FC0010AD9C /* TableViewDelegate.swift in Sources */,
+				157A95B4247AD8FC0010AD9C /* NoteViewDelegate.swift in Sources */,
 				157A95AB247A75370010AD9C /* Note+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

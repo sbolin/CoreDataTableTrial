@@ -41,14 +41,13 @@ class CoreDataController {
   lazy var fetchedGoalResultsController: NSFetchedResultsController<Goal> = {
     let context = persistentContainer.viewContext
     let request = Goal.goalFetchRequest()
-    let goalSort = NSSortDescriptor(keyPath: \Goal.goalTitle, ascending: true)
     let createdSort = NSSortDescriptor(keyPath: \Goal.goalDateCreated, ascending: false)
-    request.sortDescriptors = [goalSort, createdSort]
+    request.sortDescriptors = [createdSort]
     
     let fetchedResultsController = NSFetchedResultsController(
       fetchRequest: request,
       managedObjectContext: context,
-      sectionNameKeyPath: "goalTitle",
+      sectionNameKeyPath: "goalDateCreated",
       cacheName: nil)
     
     return fetchedResultsController

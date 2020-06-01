@@ -297,6 +297,11 @@
                     </view>
                     <navigationItem key="navigationItem" id="Zjj-Pi-qKI">
                         <barButtonItem key="backBarButtonItem" title="To Note View" id="oZf-Bt-BXn"/>
+                        <barButtonItem key="rightBarButtonItem" image="line.horizontal.3.decrease.circle" catalog="system" id="8zr-gv-JiS">
+                            <connections>
+                                <action selector="filterTapped:" destination="WEA-JA-vX9" id="Igk-C0-hLe"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="goalTableView" destination="HRz-Vh-4La" id="VJQ-8W-N6l"/>

@@ -1,5 +1,5 @@
 //
-//  TableViewDataSource.swift
+//  NoteViewDataSource.swift
 //  CoreDataTableTrial
 //
 //  Created by Scott Bolin on 5/24/20.
@@ -9,23 +9,12 @@
 import UIKit
 import CoreData
 
-protocol TableViewDataSourceDelegate: class {
+protocol NoteViewDataSourceDelegate: class {
   func configureNoteCell(_ cell: NoteCell, for object: Note)
   func configureGoalCell(_ cell: GoalCell, for object: Goal)
-  //  func supplementaryObject(at indexPath: IndexPath) -> Object?
-  //  func fetchedIndexPath(for presentedIndexPath: IndexPath) -> IndexPath?
 }
-//extension TableViewDataSourceDelegate {
-//  func supplementaryObject(at indexPath: IndexPath) -> Object? {
-//    return nil
-//  }
-//
-//  func fetchedIndexPath(for presentedIndexPath: IndexPath) -> IndexPath? {
-//    return presentedIndexPath
-//  }
-//}
 
-class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataSourceDelegate>: NSObject, UITableViewDataSource, NSFetchedResultsControllerDelegate {
+class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSourceDelegate>: NSObject, UITableViewDataSource, NSFetchedResultsControllerDelegate {
   
   // MARK:- Private Parameters
   fileprivate let tableView: UITableView
@@ -33,11 +22,10 @@ class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataS
   fileprivate weak var delegate: Delegate!
   
   //MARK: - Initializer
-  required init(tableView: UITableView, fetchedResultsController: NSFetchedResultsController<Result>, delegate: Delegate) { // change <Goal> to <Note>
+  required init(tableView: UITableView, fetchedResultsController: NSFetchedResultsController<Result>, delegate: Delegate) {
     self.tableView = tableView
     self.fetchedResultsController = fetchedResultsController
     self.delegate = delegate
-    
     
     super.init()
     fetchedResultsController.delegate = self
@@ -186,7 +174,7 @@ class TableViewDataSource<Result: NSFetchRequestResult, Delegate: TableViewDataS
   }
 }
 
-extension TableViewDataSource: NoteCellDelegate {
+extension NoteViewDataSource: NoteCellDelegate {
   func noteCell(_ cell: NoteCell, completionChanged completion: Bool) {
     print("in TableViewDataSource: noteCell \(cell), completion: \(completion)")
     // standard method

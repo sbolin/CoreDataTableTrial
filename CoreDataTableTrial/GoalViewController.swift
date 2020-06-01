@@ -10,9 +10,10 @@ import UIKit
 import CoreData
 
 class GoalViewController: UIViewController {
+  
   //MARK: - Properties
-  let delegate = TableViewDelegate()
-  var dataSource: TableViewDataSource<Goal, GoalViewController>!
+  let delegate = NoteViewDelegate()
+  var dataSource: GoalViewDataSource<Goal, GoalViewController>!
   var fetchedResultsController: NSFetchedResultsController<Goal>!
   var predicate: NSPredicate?
   
@@ -22,7 +23,7 @@ class GoalViewController: UIViewController {
   //MARK: - View Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    CoreDataController.sharedManager.createNotesIfNeeded()
+    
     tableView.delegate = delegate
     setupTableView()
     navigationItem.title = "Goal View"
@@ -39,15 +40,14 @@ class GoalViewController: UIViewController {
     } catch {
       print("Fetch failed")
     }
-    
-    dataSource = TableViewDataSource(tableView: tableView, fetchedResultsController: fetchedResultsController, delegate: self)
+    dataSource = GoalViewDataSource(tableView: tableView, fetchedResultsController: fetchedResultsController, delegate: self)
   }
+  
+  
+  
+  
   
   //MARK: - IBActions
-  @IBAction func addNoteTapped(_ sender: UIBarButtonItem) {
-    addNote()
-  }
-  
   @IBAction func filterTapped(_ sender: UIBarButtonItem) {
     updateDataSource()
   }
@@ -59,111 +59,70 @@ class GoalViewController: UIViewController {
     ac.addAction(UIAlertAction(title: "Only show fixes", style: .default) { [unowned self] _ in
       self.predicate = nil
       self.fetchedResultsController.fetchRequest.fetchLimit = 0
-      self.predicate = NSPredicate(format: "noteText CONTAINS[cd] 'fix'")
+      self.predicate = NSPredicate(format: "goalTitle CONTAINS[cd] 'fix'")
       self.setupTableView()
     })
     ac.addAction(UIAlertAction(title: "Only show todos", style: .default) { [unowned self] _ in
       self.predicate = nil
       self.fetchedResultsController.fetchRequest.fetchLimit = 0
       self.predicate = NSPredicate(format:
-        //       "(Goal.goalTitle CONTAINS[cd] 'todo') || (Goal.goalTitle CONTAINS[cd] 'to do') || (noteText CONTAINS[cd] 'todo') || (noteText CONTAINS[cd] 'to do')")
-        "(noteText CONTAINS[cd] 'todo') || (noteText CONTAINS[cd] 'to do')")
+        //       "(Goal.goalTitle CONTAINS[cd] 'todo') || (Goal.goalTitle CONTAINS[cd] 'to do') || (Note.noteText CONTAINS[cd] 'todo') || (Note.noteText CONTAINS[cd] 'to do')")
+        "(goalTitle CONTAINS[cd] 'todo') || (goalTitle CONTAINS[cd] 'to do')")
       self.setupTableView()
     })
     ac.addAction(UIAlertAction(title: "Only show completed", style: .default) { [unowned self] _ in
       self.predicate = nil
       self.fetchedResultsController.fetchRequest.fetchLimit = 0
       //      self.goalPredicate = NSPredicate(format: "(Goal.goalCompleted == true) || (noteCompleted == true)")
-      self.predicate = NSPredicate(format: "(noteCompleted == true)")
+      self.predicate = NSPredicate(format: "(goalCompleted == true)")
       self.setupTableView()
     })
-    
     ac.addAction(UIAlertAction(title: "Show today", style: .default) { [unowned self ] _ in
       self.predicate = nil
       self.fetchedResultsController.fetchRequest.fetchLimit = 0
       let twentyfourHoursAgo = Date().addingTimeInterval(-86400)
-      self.predicate = NSPredicate(format: "noteDateCreated > %@", twentyfourHoursAgo as NSDate)
+      self.predicate = NSPredicate(format: "goalDateCreated > %@", twentyfourHoursAgo as NSDate)
       self.setupTableView()
     })
     ac.addAction(UIAlertAction(title: "Show last week", style: .default) { [unowned self ] _ in
       self.predicate = nil
       self.fetchedResultsController.fetchRequest.fetchLimit = 0
       let lastWeek = Date().addingTimeInterval(-604800)
-      self.predicate = NSPredicate(format: "noteDateCreated > %@", lastWeek as NSDate)
+      self.predicate = NSPredicate(format: "goalDateCreated > %@", lastWeek as NSDate)
       self.setupTableView()
     })
     ac.addAction(UIAlertAction(title: "Show last month", style: .default) { [unowned self ] _ in
       self.predicate = nil
       self.fetchedResultsController.fetchRequest.fetchLimit = 0
       let lastMonth = Date().addingTimeInterval(-2592000)
-      self.predicate = NSPredicate(format: "noteDateCreated > %@", lastMonth as NSDate)
+      self.predicate = NSPredicate(format: "goalDateCreated > %@", lastMonth as NSDate)
       self.setupTableView()
     })
     ac.addAction(UIAlertAction(title: "Show last note", style: .default) { [unowned self] _ in
       self.predicate = nil
       self.fetchedResultsController.fetchRequest.fetchLimit = 0
-      let createdAtDescriptor = NSSortDescriptor(key: "noteDateCreated", ascending: false)
+      let createdAtDescriptor = NSSortDescriptor(key: "goalDateCreated", ascending: false)
       self.fetchedResultsController.fetchRequest.sortDescriptors = [createdAtDescriptor]
       self.fetchedResultsController.fetchRequest.fetchLimit = 1
       self.setupTableView()
     })
-    
     ac.addAction(UIAlertAction(title: "Show all notes", style: .default) { [unowned self] _ in
       self.predicate = nil
       self.fetchedResultsController.fetchRequest.fetchLimit = 0
       self.setupTableView()
     })
-    
     ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-    
     present(ac, animated: true)
   }
-  
-  func addNote() {
-    let alertController = UIAlertController(
-      title: "Add Goal",
-      message: "Add a new Goal and Text",
-      preferredStyle: .alert)
-    
-    alertController.addTextField { textField in
-      textField.placeholder = "Goal Name"
-    }
-    
-    alertController.addTextField { textField in
-      textField.placeholder = "Text"
-    }
-    
-    let saveAction = UIAlertAction(title: "Save", style: .default) { [unowned self] action in
-      guard
-        let noteTextField = alertController.textFields?.first,
-        let textTextField = alertController.textFields?.last
-        else {
-          return
-      }
-      guard let goalTitle = noteTextField.text else { return }
-      guard let noteText = textTextField.text else { return }
-      
-      let _ = CoreDataController.sharedManager.addGoal(title: goalTitle, noteText: noteText)
-      
-      print("Attempted to make new note, Title: \(goalTitle), Text: \(noteText)")
-      
-      self.tableView.reloadData()
-    }
-    alertController.addAction(saveAction)
-    alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-    present(alertController, animated: true)
-  }
-  
 }
 
 //MARK: - Delegate Methods
-extension GoalViewController: TableViewDataSourceDelegate {
+extension GoalViewController: GoalViewDataSourceDelegate {
   func configureGoalCell(_ cell: GoalCell, for object: Goal) {
     print("In GoalViewController: configureGoalCell")
-    
+    cell.configureGoalCell(for: object)
   }
   
-  //  func configure(_ cell: NoteCell, for object: Goal) {
   func configureNoteCell(_ cell: NoteCell, for object: Note) {
     print("In NoteViewController: configureNoteCell")
     cell.configureNoteCell(for: object)

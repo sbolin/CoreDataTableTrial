@@ -57,13 +57,13 @@ class CoreDataController {
     let context = persistentContainer.viewContext
     let request = Note.noteFetchRequest()
     let goalSort = NSSortDescriptor(keyPath: \Note.goal.goalTitle, ascending: true)
-    let createdSort = NSSortDescriptor(keyPath: \Note.noteDateCreated, ascending: true)
+    let createdSort = NSSortDescriptor(keyPath: \Note.noteDateCreated, ascending: false)
     request.sortDescriptors = [goalSort, createdSort]
     
     let fetchedResultsController = NSFetchedResultsController(
       fetchRequest: request,
       managedObjectContext: context,
-      sectionNameKeyPath: "goal.goalTitle",
+      sectionNameKeyPath: "Goal.goalTitle",
       cacheName: nil)
     
     return fetchedResultsController
@@ -120,10 +120,6 @@ class CoreDataController {
     goal.addToNotes(note)
     //    note.goal = goal
     saveContext()
-    
-    NSLog("New Goal: %@", goal)
-    NSLog("New Note: %@", note)
-    
     return goal
   }
   
@@ -132,10 +128,6 @@ class CoreDataController {
     note.noteText = updatedNoteText
     let goal = note.goal
     goal.goalTitle = updatedGoalTitle
-        
-    NSLog("Update Goal: %@", goal)
-    NSLog("Update Note: %@", note)
-    
     saveContext()
   }
   
@@ -149,10 +141,6 @@ class CoreDataController {
       item.noteCompleted = completed
       item.noteDateCompleted = Date()
     }
-    
-    NSLog("Mark Goal Completed Goal: %@", goal)
-    NSLog("Mark Goal Completed Note: %@", notes)
-    
     saveContext()
   }
   
@@ -160,9 +148,6 @@ class CoreDataController {
   func markNoteCompleted(completed: Bool, note: Note) {
     note.noteCompleted = completed
     note.noteDateCompleted = Date()
-    
-    NSLog("Mark Note Completed Note: %@", note)
-    
     saveContext()
   }
   
@@ -194,83 +179,111 @@ class CoreDataController {
     
     // check if notes exist, if so return
     let context = persistentContainer.viewContext
-//    let fetchRequest = Goal.goalFetchRequest()
     let fetchRequest = Note.noteFetchRequest()
     let count = try! context.count(for: fetchRequest)
     
     guard count == 0 else { return }
     
-    // Goal 1
-    let goal = NSEntityDescription.insertNewObject(forEntityName: "Goal", into: context) as! Goal
-    goal.goalTitle = "First Goal"
-    goal.goalDateCreated = Date()
-    goal.goalCompleted = false
+    // Goal 4
+    let goal4 = NSEntityDescription.insertNewObject(forEntityName: "Goal", into: context) as! Goal
+    goal4.goalTitle = "Fourth Goal"
+    goal4.goalDateCreated = Date()
+    goal4.goalCompleted = false
+    
     let note1 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
-    note1.noteText = "Goal 1, Note 1"
+    note1.noteText = "Goal 4, Note 1"
     note1.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*1)
     note1.noteCompleted = false
-    note1.goal = goal
+    note1.goal = goal4
     
     let note2 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
-    note2.noteText = "Goal 1, Note 2"
+    note2.noteText = "Goal 4, Note 2"
     note2.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*2)
     note2.noteCompleted = false
-    note2.goal = goal
+    note2.goal = goal4
     
     let note3 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
-    note3.noteText = "Goal 1, Note 3"
+    note3.noteText = "Goal 4, Note 3"
     note3.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*3)
     note3.noteCompleted = false
-    note3.goal = goal
-    
-    // Goal 2
-    let goal2 = NSEntityDescription.insertNewObject(forEntityName: "Goal", into: context) as! Goal
-    goal2.goalTitle = "Second Goal"
-    goal2.goalDateCreated = Date(timeIntervalSinceNow: -60*60*24*4)
-    goal2.goalCompleted = false
-    let note4 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
-    note4.noteText = "Goal 2, Note 1"
-    note4.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*5)
-    note4.noteCompleted = false
-    note4.goal = goal2
-    
-    let note5 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
-    note5.noteText = "Goal 2, Note 2"
-    note5.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*6)
-    note5.noteCompleted = false
-    note5.goal = goal2
-    
-    let note6 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
-    note6.noteText = "Goal 2, Note 3"
-    note6.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*7)
-    note6.noteCompleted = false
-    note6.goal = goal2
+    note3.goal = goal4
     
     // Goal 3
     let goal3 = NSEntityDescription.insertNewObject(forEntityName: "Goal", into: context) as! Goal
     goal3.goalTitle = "Third Goal"
-    goal3.goalDateCreated = Date(timeIntervalSinceNow: -60*60*24*8)
-    goal3.goalCompleted = true
-    goal3.goalDateCompleted = Date(timeIntervalSinceNow: -60*60*24*7)
+    goal3.goalDateCreated = Date(timeIntervalSinceNow: -60*60*24*4)
+    goal3.goalCompleted = false
+    
+    let note4 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
+    note4.noteText = "Goal 3, Note 1"
+    note4.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*5)
+    note4.noteCompleted = false
+    note4.goal = goal3
+    
+    let note5 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
+    note5.noteText = "Goal 3, Note 2"
+    note5.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*6)
+    note5.noteCompleted = true
+    note5.goal = goal3
+    
+    let note6 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
+    note6.noteText = "Goal 3, Note 3"
+    note6.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*7)
+    note6.noteCompleted = false
+    note6.goal = goal3
+    
+    // Goal 2
+    let goal2 = NSEntityDescription.insertNewObject(forEntityName: "Goal", into: context) as! Goal
+    goal2.goalTitle = "Second Goal"
+    goal2.goalDateCreated = Date(timeIntervalSinceNow: -60*60*24*8)
+    goal2.goalCompleted = true
+    goal2.goalDateCompleted = Date(timeIntervalSinceNow: -60*60*24*7)
+    
     let note7 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
-    note7.noteText = "Goal 3, Note 1"
+    note7.noteText = "Goal 2, Note 1"
     note7.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*9)
     note7.noteCompleted = true
-    //    attachment7.note = note3
+    note7.noteDateCompleted = Date(timeIntervalSinceNow: -60*60*24*8)
+    note7.goal = goal2
     
     let note8 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
-    note8.noteText = "Goal 3, Note 2"
+    note8.noteText = "Goal 2, Note 2"
     note8.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*10)
-    note8.noteCompleted = false
-    //    attachment8.note = note3
+    note8.noteCompleted = true
+    note8.noteDateCompleted = Date(timeIntervalSinceNow: -60*60*24*9)
+    note8.goal = goal2
     
     let note9 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
-    note9.noteText = "Goal 3, Note 3"
+    note9.noteText = "Goal 2, Note 3"
     note9.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*11)
-    note9.noteCompleted = false
-    //    attachment9.note = note3
+    note9.noteCompleted = true
+    note9.noteDateCompleted = Date(timeIntervalSinceNow: -60*60*24*10)
+    note9.goal = goal2
+ 
+    // Goal 4
+    let goal1 = NSEntityDescription.insertNewObject(forEntityName: "Goal", into: context) as! Goal
+    goal1.goalTitle = "First Goal"
+    goal1.goalDateCreated = Date(timeIntervalSinceNow: -60*60*24*31)
+    goal1.goalCompleted = false
     
-    goal3.addToNotes([note7, note8, note9])
+    let note10 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
+    note10.noteText = "Goal 1, Note 1"
+    note10.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*32)
+    note10.noteCompleted = true
+    note10.noteDateCompleted = Date(timeIntervalSinceNow: -60*60*24*25)
+    note10.goal = goal1
+    
+    let note11 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
+    note11.noteText = "Goal 1, Note 2"
+    note11.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*33)
+    note11.noteCompleted = false
+    note11.goal = goal1
+    
+    let note12 = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
+    note12.noteText = "Goal 1, Note 3"
+    note12.noteDateCreated = Date(timeIntervalSinceNow: -60*60*24*34)
+    note12.noteCompleted = false
+    note12.goal = goal1
     
     saveContext()
   }

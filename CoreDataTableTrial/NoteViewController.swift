@@ -152,13 +152,13 @@ class NoteViewController: UIViewController {
 
 //MARK: - Delegate Methods
 extension NoteViewController: NoteViewDataSourceDelegate {
-  func configureGoalCell(_ cell: GoalCell, for object: Goal) {
-
+  func configureNoteCell(at indexPath: IndexPath, _ cell: NoteCell, for object: Note) {
+    cell.configureNoteCell(at: indexPath, for: object)
   }
   
-  //  func configure(_ cell: NoteCell, for object: Goal) {
-  func configureNoteCell(_ cell: NoteCell, for object: Note) {
-    cell.configureNoteCell(for: object)
+  func configureGoalCell(at indexPath: IndexPath, _ cell: GoalCell, for object: Goal) {
+    cell.configureGoalCell(at: indexPath, for: object)
+
   }
 }
 

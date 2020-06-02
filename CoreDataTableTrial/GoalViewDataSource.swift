@@ -10,8 +10,8 @@ import UIKit
 import CoreData
 
 protocol GoalViewDataSourceDelegate: class {
-  func configureNoteCell(_ cell: NoteCell, for object: Note)
-  func configureGoalCell(_ cell: GoalCell, for object: Goal)
+  func configureNoteCell(at indexPath: IndexPath, _ cell: NoteCell, for object: Note)
+  func configureGoalCell(at indexPath: IndexPath, _ cell: GoalCell, for object: Goal)
 }
 
 class GoalViewDataSource<Result: NSFetchRequestResult, Delegate: GoalViewDataSourceDelegate>: NSObject, UITableViewDataSource, NSFetchedResultsControllerDelegate {
@@ -57,29 +57,26 @@ class GoalViewDataSource<Result: NSFetchRequestResult, Delegate: GoalViewDataSou
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     guard let section = self.fetchedResultsController.sections?[section] else { return 0 }
-    let numberOfRows = section.numberOfObjects
+    let numberOfRows = section.numberOfObjects // account for added goal cell
     return numberOfRows
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     
-    print("Indexpath: \(indexPath), section: \(indexPath.section), row: \(indexPath.row)")
     let noteObject = self.fetchedResultsController.object(at: indexPath) as! Note
     let goalObject = noteObject.goal
-    print("Indexpath: section: \(indexPath.section), row: \(indexPath.row)")
+    print("Indexpath: \(indexPath), section: \(indexPath.section), row: \(indexPath.row)")
     print("Objects - \nGoal: \(goalObject), \nNote: \(noteObject)")
     
     if indexPath.row == 0 {
-//    if goalObject.isKind(of: Goal.self) {
       let goalCell = tableView.dequeueReusableCell(withIdentifier: "GoalCell" , for: indexPath) as! GoalCell
-//      print("Goal indexPath.section: \(indexPath.section), indexPath.row: \(indexPath.row)")
-      delegate?.configureGoalCell(goalCell, for: goalObject)
+      delegate?.configureGoalCell(at: indexPath, goalCell, for: goalObject)
       print("goalcell configured: \(goalCell)")
       return goalCell
     }
+//    let previousIndex = IndexPath(row: indexPath.row, section: indexPath.section)
     let noteCell = tableView.dequeueReusableCell(withIdentifier: "NoteCell", for: indexPath) as! NoteCell
-//    print("Note indexPath.section: \(indexPath.section), indexPath.row: \(indexPath.row)")
-    delegate?.configureNoteCell(noteCell, for: noteObject)
+    delegate?.configureNoteCell(at: indexPath, noteCell, for: noteObject)
     print("notecell configured: \(noteCell)")
     return noteCell
   }

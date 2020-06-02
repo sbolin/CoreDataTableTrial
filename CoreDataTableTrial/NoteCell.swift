@@ -32,14 +32,14 @@ class NoteCell: UITableViewCell {
   }
   
   //MARK: - Helper function
-  func configureNoteCell(for note: Note) {
+  func configureNoteCell(at indexPath: IndexPath, for note: Note) {
 
     let dayFormatter = DateFormatter()
     let monthFormatter = DateFormatter()
     dayFormatter.dateFormat = "dd"
     monthFormatter.dateFormat = "MMM"
     goalTitleLabel.text = note.goal.goalTitle
-    noteTextLabel.text = note.noteText
+    noteTextLabel.text = note.noteText  + " (\(indexPath.section) / \(indexPath.row))"
     dayCreatedLabel.text = dayFormatter.string(from: note.noteDateCreated)
     monthCreatedLabel.text = monthFormatter.string(from: note.noteDateCreated)
     completedButton.isSelected = note.noteCompleted

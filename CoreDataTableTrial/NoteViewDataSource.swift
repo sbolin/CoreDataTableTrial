@@ -10,8 +10,8 @@ import UIKit
 import CoreData
 
 protocol NoteViewDataSourceDelegate: class {
-  func configureNoteCell(_ cell: NoteCell, for object: Note)
-  func configureGoalCell(_ cell: GoalCell, for object: Goal)
+  func configureNoteCell(at indexPath: IndexPath, _ cell: NoteCell, for object: Note)
+  func configureGoalCell(at indexPath: IndexPath,_ cell: GoalCell, for object: Goal)
 }
 
 class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSourceDelegate>: NSObject, UITableViewDataSource, NSFetchedResultsControllerDelegate {
@@ -47,6 +47,7 @@ class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSou
     return sectionInfo.name
   }
   
+  /*
   func sectionIndexTitles(for tableView: UITableView) -> [String]? {
     return self.fetchedResultsController.sectionIndexTitles
   }
@@ -54,7 +55,7 @@ class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSou
   func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
     return self.fetchedResultsController.section(forSectionIndexTitle: title, at: index)
   }
-  
+  */
  
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     guard let section = self.fetchedResultsController.sections?[section] else { return 0 }
@@ -65,7 +66,7 @@ class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSou
     let noteCell = tableView.dequeueReusableCell(withIdentifier: NoteCell.reuseIdentifier , for: indexPath) as! NoteCell
     noteCell.noteCellDelegate = self
     let noteObject = self.fetchedResultsController.object(at: indexPath)
-    delegate?.configureNoteCell(noteCell, for: noteObject as! Note)
+    delegate?.configureNoteCell(at: indexPath, noteCell, for: noteObject as! Note)
     return noteCell
   }
   

@@ -118,11 +118,11 @@ class GoalViewController: UIViewController {
 
 //MARK: - Delegate Methods
 extension GoalViewController: GoalViewDataSourceDelegate {
-  func configureGoalCell(_ cell: GoalCell, for object: Goal) {
-    cell.configureGoalCell(for: object)
+  func configureGoalCell(at indexPath: IndexPath, _ cell: GoalCell, for object: Goal) {
+    cell.configureGoalCell(at: indexPath, for: object)
   }
   
-  func configureNoteCell(_ cell: NoteCell, for object: Note) {
-    cell.configureNoteCell(for: object)
+  func configureNoteCell(at indexPath: IndexPath, _ cell: NoteCell, for object: Note) {
+    cell.configureNoteCell(at: indexPath, for: object)
   }
 }

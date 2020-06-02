@@ -25,13 +25,13 @@ class GoalCell: UITableViewCell {
     completedButton.isEnabled = false
   }
   //MARK: - Helper function
-  func configureGoalCell(for goal: Goal) {
+  func configureGoalCell(at indexPath: IndexPath, for goal: Goal) {
     
     let dayFormatter = DateFormatter()
     let monthFormatter = DateFormatter()
     dayFormatter.dateFormat = "dd"
     monthFormatter.dateFormat = "MMM"
-    goalTitleLabel.text = goal.goalTitle
+    goalTitleLabel.text = goal.goalTitle + " (\(indexPath.section) / \(indexPath.row))"
     dayCreatedLabel.text = dayFormatter.string(from: goal.goalDateCreated)
     monthCreatedLabel.text = monthFormatter.string(from: goal.goalDateCreated)
     completedButton.isSelected = goal.goalCompleted

@@ -56,28 +56,27 @@ class GoalViewDataSource<Result: NSFetchRequestResult, Delegate: GoalViewDataSou
   }
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    guard let section = self.fetchedResultsController.sections?[section] else { return 0 }
-    let numberOfRows = section.numberOfObjects // account for added goal cell
+    guard let fetchedSection = self.fetchedResultsController.sections?[section] else { return 0 }
+    let numberOfRows = fetchedSection.numberOfObjects + 1 // account for added goal cell
     return numberOfRows
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     
-    let noteObject = self.fetchedResultsController.object(at: indexPath) as! Note
-    let goalObject = noteObject.goal
     print("Indexpath: \(indexPath), section: \(indexPath.section), row: \(indexPath.row)")
-    print("Objects - \nGoal: \(goalObject), \nNote: \(noteObject)")
     
     if indexPath.row == 0 {
+      let noteObject = self.fetchedResultsController.object(at: indexPath) as! Note
+      let goalObject = noteObject.goal
       let goalCell = tableView.dequeueReusableCell(withIdentifier: "GoalCell" , for: indexPath) as! GoalCell
       delegate?.configureGoalCell(at: indexPath, goalCell, for: goalObject)
-      print("goalcell configured: \(goalCell)")
       return goalCell
     }
-//    let previousIndex = IndexPath(row: indexPath.row, section: indexPath.section)
+    let previousIndex = IndexPath(row: indexPath.row - 1, section: indexPath.section)
+    let noteObject = self.fetchedResultsController.object(at: previousIndex) as! Note
+    print("previousIndex: \(previousIndex), section: \(previousIndex.section), row:\(previousIndex.row)")
     let noteCell = tableView.dequeueReusableCell(withIdentifier: "NoteCell", for: indexPath) as! NoteCell
     delegate?.configureNoteCell(at: indexPath, noteCell, for: noteObject)
-    print("notecell configured: \(noteCell)")
     return noteCell
   }
   

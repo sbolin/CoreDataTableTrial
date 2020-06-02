@@ -33,9 +33,7 @@ class NoteCell: UITableViewCell {
   
   //MARK: - Helper function
   func configureNoteCell(for note: Note) {
-    
-    NSLog("In NoteCell: configure(for note:), %@", note)
-    
+
     let dayFormatter = DateFormatter()
     let monthFormatter = DateFormatter()
     dayFormatter.dateFormat = "dd"
@@ -66,12 +64,9 @@ class NoteCell: UITableViewCell {
   
   //MARK: - IBAction
   @IBAction func completedTapped(_ sender: UIButton) {
-    print("completedButton Clicked")
     completedButton.isSelected.toggle()
     toggleButtonColor()
     // update data model
-    print("In NoteCell, calling noteCell delegate method")
     noteCellDelegate?.noteCell(self, completionChanged: completedButton.isSelected)
-    print("...after delegate call")
   }
 }

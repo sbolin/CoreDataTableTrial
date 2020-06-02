@@ -24,13 +24,9 @@ class NoteViewDelegate: NSObject, UITableViewDelegate {
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
-    print("didSelectRowAt called at \(indexPath.row)")
     
     let note = fetchController.object(at: indexPath)
     let goal = note.goal
-    
-    print("didSelectRowAt Note object: \(note)")
-    print("didSelectRowAt Goal object: \(goal)")
 
     let alert = UIAlertController(title: "Update Goal",
                                   message: "Update Goal Contents",
@@ -73,12 +69,10 @@ class NoteViewDelegate: NSObject, UITableViewDelegate {
   }
   
   func update(goalTitle: String, noteText: String, at indexPath: IndexPath) {
-    print("update goal from TableViewDelegate")
     CoreDataController.sharedManager.updateGoal(updatedGoalTitle: goalTitle, updatedNoteText: noteText, at: indexPath)
   }
   
   func deleteGoal(goalToDelete: Goal) {
-    print("deleteGoal from TableViewDelegate")
     CoreDataController.sharedManager.deleteGoal(goal: goalToDelete)
   }
 }

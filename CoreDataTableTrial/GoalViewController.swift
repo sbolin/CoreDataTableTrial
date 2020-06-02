@@ -12,9 +12,9 @@ import CoreData
 class GoalViewController: UIViewController {
   
   //MARK: - Properties
-  let delegate = NoteViewDelegate()
-  var dataSource: GoalViewDataSource<Goal, GoalViewController>!
-  var fetchedResultsController: NSFetchedResultsController<Goal>!
+  let delegate = GoalViewDelegate()
+  var dataSource: GoalViewDataSource<Note, GoalViewController>!
+  var fetchedResultsController: NSFetchedResultsController<Note>!
   var predicate: NSPredicate?
   
   //MARK: - IBOutlets
@@ -31,7 +31,7 @@ class GoalViewController: UIViewController {
   
   func setupTableView() {
     if fetchedResultsController == nil {
-      fetchedResultsController = CoreDataController.sharedManager.fetchedGoalResultsController
+      fetchedResultsController = CoreDataController.sharedManager.fetchedNoteGoalResultsController
     }
     fetchedResultsController.fetchRequest.predicate = predicate
     do {
@@ -119,12 +119,10 @@ class GoalViewController: UIViewController {
 //MARK: - Delegate Methods
 extension GoalViewController: GoalViewDataSourceDelegate {
   func configureGoalCell(_ cell: GoalCell, for object: Goal) {
-    print("In GoalViewController: configureGoalCell")
     cell.configureGoalCell(for: object)
   }
   
   func configureNoteCell(_ cell: NoteCell, for object: Note) {
-    print("In NoteViewController: configureNoteCell")
     cell.configureNoteCell(for: object)
   }
 }

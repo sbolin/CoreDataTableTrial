@@ -57,7 +57,7 @@ class CoreDataController {
     let context = persistentContainer.viewContext
     let request = Note.noteFetchRequest()
     let goalSort = NSSortDescriptor(keyPath: \Note.goal.goalTitle, ascending: true)
-    let createdSort = NSSortDescriptor(keyPath: \Note.noteDateCreated, ascending: false)
+    let createdSort = NSSortDescriptor(keyPath: \Note.noteDateCreated, ascending: true)
     request.sortDescriptors = [goalSort, createdSort]
     
     let fetchedResultsController = NSFetchedResultsController(
@@ -69,8 +69,22 @@ class CoreDataController {
     return fetchedResultsController
   }()
   
+  lazy var fetchedNoteGoalResultsController: NSFetchedResultsController<Note> = {
+    let context = persistentContainer.viewContext
+    let request = Note.noteFetchRequest()
+    let createdSort = NSSortDescriptor(keyPath: \Note.goal.goalDateCreated, ascending: false)
+    request.sortDescriptors = [createdSort]
+    
+    let fetchedResultsController = NSFetchedResultsController(
+      fetchRequest: request,
+      managedObjectContext: context,
+      sectionNameKeyPath: "goal.goalDateCreated",
+      cacheName: nil)
+    
+    return fetchedResultsController
+  }()
+  
   func saveContext () {
-    print("func saveContext")
     let context = persistentContainer.viewContext
     guard context.hasChanges else { return }
     do {
@@ -93,7 +107,6 @@ class CoreDataController {
   
   //Add new Goal
   func addGoal(title: String, noteText: String) -> Goal? {
-    print("\nfunc addGoal: Title: \(title), Text: \(noteText)")
     let context = persistentContainer.viewContext
     let goal = Goal(context: context)
     let note = Note(context: context)
@@ -115,7 +128,6 @@ class CoreDataController {
   }
   
   func updateGoal(updatedGoalTitle: String, updatedNoteText: String, at indexPath: IndexPath) {
-    print("func updateGoal: Title: \(updatedGoalTitle), Text: \(updatedNoteText)")
     let note = fetchedNoteResultsController.object(at: indexPath)
     note.noteText = updatedNoteText
     let goal = note.goal
@@ -129,8 +141,6 @@ class CoreDataController {
   
   //Mark Goal Completed
   func markGoalCompleted(completed: Bool, goal: Goal) {
-    print("func markGoalCompleted")
-    //  let context = CoreDataController.sharedManager.persistentContainer.viewContext
     
     goal.goalCompleted = completed
     goal.goalDateCompleted =  Date()
@@ -148,7 +158,6 @@ class CoreDataController {
   
   //Mark Note Completed
   func markNoteCompleted(completed: Bool, note: Note) {
-    print("func markNoteCompleted")
     note.noteCompleted = completed
     note.noteDateCompleted = Date()
     
@@ -160,7 +169,6 @@ class CoreDataController {
   
   //Delete Goal
   func deleteGoal(goal: Goal) {
-    print("func deleteNote: note: \(goal)")
     let context = CoreDataController.sharedManager.persistentContainer.viewContext
     context.delete(goal)
     saveContext()
@@ -168,7 +176,6 @@ class CoreDataController {
   
   //Delete Note
   func deleteNote(note: Note) {
-    print("func deleteAttachment: attachment: \(note)")
     let context = CoreDataController.sharedManager.persistentContainer.viewContext
     let associatedGoal = note.goal
     let noteCount = associatedGoal.notes.count

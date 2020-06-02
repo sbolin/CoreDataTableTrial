@@ -141,9 +141,7 @@ class NoteViewController: UIViewController {
       guard let noteText = textTextField.text else { return }
       
       let _ = CoreDataController.sharedManager.addGoal(title: goalTitle, noteText: noteText)
-      
-      print("Attempted to make new note, Title: \(goalTitle), Text: \(noteText)")
-      
+            
       self.tableView.reloadData()
     }
     alertController.addAction(saveAction)
@@ -155,13 +153,11 @@ class NoteViewController: UIViewController {
 //MARK: - Delegate Methods
 extension NoteViewController: NoteViewDataSourceDelegate {
   func configureGoalCell(_ cell: GoalCell, for object: Goal) {
-    print("In NoteViewController: configureGoalCell")
 
   }
   
   //  func configure(_ cell: NoteCell, for object: Goal) {
   func configureNoteCell(_ cell: NoteCell, for object: Note) {
-    print("In NoteViewController: configureNoteCell")
     cell.configureNoteCell(for: object)
   }
 }

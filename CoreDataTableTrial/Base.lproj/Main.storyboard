@@ -304,7 +304,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="goalTableView" destination="HRz-Vh-4La" id="VJQ-8W-N6l"/>
+                        <outlet property="tableView" destination="HRz-Vh-4La" id="2h7-r7-12P"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0je-8O-K9D" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

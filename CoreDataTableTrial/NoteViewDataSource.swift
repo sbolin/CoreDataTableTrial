@@ -31,23 +31,8 @@ class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSou
     fetchedResultsController.delegate = self
     try! fetchedResultsController.performFetch()
     tableView.dataSource = self
-    print("Initialized tableview, about to reloadData")
-    print("number of sections: \(String(describing: fetchedResultsController.sections?.count)))")
     tableView.reloadData()
   }
-  
-  //MARK:- Helper functions
-  //  var selectedObject: Object? {
-  //    guard let indexPath = tableView.indexPathForSelectedRow else { return nil }
-  //    return objectAtIndexPath(indexPath)
-  //  }
-  //
-  //  func objectAtIndexPath(_ indexPath: IndexPath) -> Object {
-  //    guard let fetchedIndexPath = delegate.fetchedIndexPath(for: indexPath) else {
-  //      return delegate.supplementaryObject(at: indexPath)!
-  //    }
-  //    return (fetchedGoalResultsController.object(at: fetchedIndexPath) as! Object)
-  //  }
   
   //MARK: - UITableViewDataSource methods
   
@@ -70,18 +55,17 @@ class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSou
     return self.fetchedResultsController.section(forSectionIndexTitle: title, at: index)
   }
   
+ 
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     guard let section = self.fetchedResultsController.sections?[section] else { return 0 }
     return section.numberOfObjects
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    print("In cellForRowAt")
     let noteCell = tableView.dequeueReusableCell(withIdentifier: NoteCell.reuseIdentifier , for: indexPath) as! NoteCell
     noteCell.noteCellDelegate = self
     let noteObject = self.fetchedResultsController.object(at: indexPath)
     delegate?.configureNoteCell(noteCell, for: noteObject as! Note)
-    print("dequeued cell: \(noteCell)")
     return noteCell
   }
   
@@ -176,10 +160,7 @@ class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSou
 
 extension NoteViewDataSource: NoteCellDelegate {
   func noteCell(_ cell: NoteCell, completionChanged completion: Bool) {
-    print("in TableViewDataSource: noteCell \(cell), completion: \(completion)")
-    // standard method
-    //    guard let indexPath = tableView.indexPath(for: cell) else { fatalError("Index path should not be nil")}
-    // alt method
+
     guard let indexPath = tableView.indexPathForSelectedRow else { return }
     let goal = CoreDataController.sharedManager.fetchedGoalResultsController.object(at: indexPath)
     let note = CoreDataController.sharedManager.fetchedNoteResultsController.object(at: indexPath)

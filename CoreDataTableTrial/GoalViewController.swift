@@ -12,6 +12,7 @@ import CoreData
 class GoalViewController: UIViewController {
   
   //MARK: - Properties
+  private let filterViewControllerSegueIdentifier = "toFilterViewController"
   let delegate = GoalViewDelegate()
   var dataSource: GoalViewDataSource<Note, GoalViewController>!
   var fetchedResultsController: NSFetchedResultsController<Note>!
@@ -43,6 +44,19 @@ class GoalViewController: UIViewController {
     dataSource = GoalViewDataSource(tableView: tableView, fetchedResultsController: fetchedResultsController, delegate: self)
   }
   
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    guard segue.identifier == filterViewControllerSegueIdentifier,
+      let navController = segue.destination as? UINavigationController,
+      let filterVC = navController.topViewController as? FilterViewController
+    else {
+      return
+    }
+    
+    
+  }
+  
+  @IBAction func unwindToVenueListViewController(_ segue: UIStoryboardSegue) {
+  }
   
   
   

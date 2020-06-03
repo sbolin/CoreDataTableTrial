@@ -45,12 +45,16 @@ class GoalViewDataSource<Result: NSFetchRequestResult, Delegate: GoalViewDataSou
     guard let sectionInfo = self.fetchedResultsController.sections?[section] else {
       return nil
     }
+    let indexPath = IndexPath(row: 0, section: section)
+    let noteObject = self.fetchedResultsController.object(at: indexPath) as! Note
+    let goalTitle = noteObject.goal.goalTitle
+    
     let dateFormatterGet = DateFormatter()
     dateFormatterGet.dateFormat =  "yyyy-MM-dd HH:mm:ss Z"
     let dateFormatterPrint = DateFormatter()
     dateFormatterPrint.dateFormat = "dd-MMM-yyyy"
     guard let date = dateFormatterGet.date(from: sectionInfo.name) else { return "No Date" }
-    let sectionTitle = dateFormatterPrint.string(from: date)
+    let sectionTitle = dateFormatterPrint.string(from: date) + goalTitle
     return sectionTitle
 
   }
@@ -62,9 +66,7 @@ class GoalViewDataSource<Result: NSFetchRequestResult, Delegate: GoalViewDataSou
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    
-    print("Indexpath: \(indexPath), section: \(indexPath.section), row: \(indexPath.row)")
-    
+        
     if indexPath.row == 0 {
       let noteObject = self.fetchedResultsController.object(at: indexPath) as! Note
       let goalObject = noteObject.goal
@@ -74,7 +76,6 @@ class GoalViewDataSource<Result: NSFetchRequestResult, Delegate: GoalViewDataSou
     }
     let previousIndex = IndexPath(row: indexPath.row - 1, section: indexPath.section)
     let noteObject = self.fetchedResultsController.object(at: previousIndex) as! Note
-    print("previousIndex: \(previousIndex), section: \(previousIndex.section), row:\(previousIndex.row)")
     let noteCell = tableView.dequeueReusableCell(withIdentifier: "NoteCell", for: indexPath) as! NoteCell
     delegate?.configureNoteCell(at: indexPath, noteCell, for: noteObject)
     return noteCell

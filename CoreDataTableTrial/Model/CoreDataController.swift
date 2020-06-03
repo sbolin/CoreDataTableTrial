@@ -96,17 +96,21 @@ class CoreDataController {
   
   //Add new Note
   func addNote(text: String, at indexPath: IndexPath) {
+    print("addNote")
     let context = persistentContainer.viewContext
-    let goal = fetchedGoalResultsController.object(at: indexPath)
-    let note = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
-    note.noteText = text
-    note.noteDateCreated = Date()
-    note.noteCompleted = false
-    note.goal = goal
+    let note = fetchedNoteResultsController.object(at: indexPath)
+    let goal = note.goal
+    let newNote = NSEntityDescription.insertNewObject(forEntityName: "Note", into: context) as! Note
+    newNote.noteText = text
+    newNote.noteDateCreated = Date()
+    newNote.noteCompleted = false
+    newNote.goal = goal
+    
   }
   
   //Add new Goal
   func addGoal(title: String, noteText: String) -> Goal? {
+    print("addGoal")
     let context = persistentContainer.viewContext
     let goal = Goal(context: context)
     let note = Note(context: context)
@@ -124,16 +128,23 @@ class CoreDataController {
   }
   
   func updateGoal(updatedGoalTitle: String, updatedNoteText: String, at indexPath: IndexPath) {
+    print("updateGoal")
     let note = fetchedNoteResultsController.object(at: indexPath)
-    note.noteText = updatedNoteText
     let goal = note.goal
-    goal.goalTitle = updatedGoalTitle
+    
+    if note.noteText != updatedNoteText {
+      note.noteText = updatedNoteText
+    }
+    if goal.goalTitle != updatedGoalTitle {
+      goal.goalTitle = updatedGoalTitle
+    }
+    goal.addToNotes(note)
     saveContext()
   }
   
   //Mark Goal Completed
   func markGoalCompleted(completed: Bool, goal: Goal) {
-    
+    print("markGoalCompleted")
     goal.goalCompleted = completed
     goal.goalDateCompleted =  Date()
     let notes = goal.notes
@@ -146,6 +157,7 @@ class CoreDataController {
   
   //Mark Note Completed
   func markNoteCompleted(completed: Bool, note: Note) {
+    print("markNoteCompleted")
     note.noteCompleted = completed
     note.noteDateCompleted = Date()
     saveContext()
@@ -154,6 +166,7 @@ class CoreDataController {
   
   //Delete Goal
   func deleteGoal(goal: Goal) {
+    print("deleteGoal")
     let context = CoreDataController.sharedManager.persistentContainer.viewContext
     context.delete(goal)
     saveContext()
@@ -161,6 +174,7 @@ class CoreDataController {
   
   //Delete Note
   func deleteNote(note: Note) {
+    print("deleteNote")
     let context = CoreDataController.sharedManager.persistentContainer.viewContext
     let associatedGoal = note.goal
     let noteCount = associatedGoal.notes.count
@@ -259,7 +273,7 @@ class CoreDataController {
     note9.noteCompleted = true
     note9.noteDateCompleted = Date(timeIntervalSinceNow: -60*60*24*10)
     note9.goal = goal2
- 
+    
     // Goal 4
     let goal1 = NSEntityDescription.insertNewObject(forEntityName: "Goal", into: context) as! Goal
     goal1.goalTitle = "First Goal"

@@ -25,6 +25,7 @@
 		157A95B0247A77E90010AD9C /* CoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A95AF247A77E90010AD9C /* CoreDataController.swift */; };
 		157A95B2247AD6DA0010AD9C /* NoteViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A95B1247AD6DA0010AD9C /* NoteViewDataSource.swift */; };
 		157A95B4247AD8FC0010AD9C /* NoteViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157A95B3247AD8FC0010AD9C /* NoteViewDelegate.swift */; };
+		15BEDD1C2487BCB100F277B2 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BEDD1B2487BCB100F277B2 /* FilterViewController.swift */; };
 		15D63908247E8DFA00662AE1 /* NoteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D63907247E8DFA00662AE1 /* NoteCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		157A95AF247A77E90010AD9C /* CoreDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataController.swift; sourceTree = "<group>"; };
 		157A95B1247AD6DA0010AD9C /* NoteViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewDataSource.swift; sourceTree = "<group>"; };
 		157A95B3247AD8FC0010AD9C /* NoteViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewDelegate.swift; sourceTree = "<group>"; };
+		15BEDD1B2487BCB100F277B2 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
 		15D63907247E8DFA00662AE1 /* NoteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,6 +93,7 @@
 				151A3FDF24850BA4005815AE /* GoalViewDataSource.swift */,
 				151A3FE124850FEF005815AE /* GoalViewDelegate.swift */,
 				151A3FDB248250EF005815AE /* GoalCell.swift */,
+				15BEDD1B2487BCB100F277B2 /* FilterViewController.swift */,
 				157A9581247A6DFB0010AD9C /* SceneDelegate.swift */,
 				157A957F247A6DFB0010AD9C /* AppDelegate.swift */,
 				157A9585247A6DFB0010AD9C /* Main.storyboard */,
@@ -185,6 +188,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15BEDD1C2487BCB100F277B2 /* FilterViewController.swift in Sources */,
 				157A95AC247A75370010AD9C /* Note+CoreDataProperties.swift in Sources */,
 				151A3FE024850BA4005815AE /* GoalViewDataSource.swift in Sources */,
 				151A3FDC248250EF005815AE /* GoalCell.swift in Sources */,

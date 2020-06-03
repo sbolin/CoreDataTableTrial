@@ -24,7 +24,6 @@ class NoteViewDelegate: NSObject, UITableViewDelegate {
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
-    
     let note = fetchController.object(at: indexPath)
     let goal = note.goal
 
@@ -39,6 +38,7 @@ class NoteViewDelegate: NSObject, UITableViewDelegate {
     alert.addTextField { (textFieldAttachment) in
       textFieldAttachment.placeholder = "Goal Contents"
       textFieldAttachment.text = note.noteText
+      
       //UPDATE
       let updateAction = UIAlertAction(title: "Update", style: .default) { [unowned self] action in
         guard let textFieldTitle = alert.textFields?[0],
@@ -52,6 +52,19 @@ class NoteViewDelegate: NSObject, UITableViewDelegate {
         self.update(goalTitle: goalTitleToSave, noteText: noteTextToSave, at: indexPath)
       }
       
+      //UPDATE
+      let addNoteAction = UIAlertAction(title: "Add Note", style: .default) { [unowned self] action in
+        guard let textFieldTitle = alert.textFields?[0],
+          let goalTitleToSave = textFieldTitle.text else {
+            return
+        }
+        guard let textFieldnoteText = alert.textFields?[1],
+          let noteTextToSave = textFieldnoteText.text else {
+            return
+        }
+        self.addNote(goalTitle: goalTitleToSave, noteText: noteTextToSave, at: indexPath)
+      }
+      
       //DELETE
       let deleteAction = UIAlertAction(title: "Delete", style: .default) { [unowned self] action in
         self.deleteGoal(goalToDelete: goal)
@@ -60,16 +73,22 @@ class NoteViewDelegate: NSObject, UITableViewDelegate {
       //CANCEL
       let cancelAction = UIAlertAction(title: "Cancel", style: .default)
       alert.addAction(updateAction)
+      alert.addAction(addNoteAction)
       alert.addAction(cancelAction)
       alert.addAction(deleteAction)
       guard let viewController = tableView.findViewController() else { return }
       viewController.present(alert, animated: true)
       
     }
+    tableView.deselectRow(at: indexPath, animated: true)
   }
   
   func update(goalTitle: String, noteText: String, at indexPath: IndexPath) {
     CoreDataController.sharedManager.updateGoal(updatedGoalTitle: goalTitle, updatedNoteText: noteText, at: indexPath)
+  }
+  
+  func addNote(goalTitle: String, noteText: String, at indexPath: IndexPath) {
+    CoreDataController.sharedManager.addNote(text: noteText, at: indexPath)
   }
   
   func deleteGoal(goalToDelete: Goal) {

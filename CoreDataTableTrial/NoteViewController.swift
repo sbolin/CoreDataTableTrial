@@ -65,9 +65,9 @@ class NoteViewController: UIViewController {
     ac.addAction(UIAlertAction(title: "Only show todos", style: .default) { [unowned self] _ in
       self.predicate = nil
       self.fetchedResultsController.fetchRequest.fetchLimit = 0
-      self.predicate = NSPredicate(format:
-        //       "(Goal.goalTitle CONTAINS[cd] 'todo') || (Goal.goalTitle CONTAINS[cd] 'to do') || (noteText CONTAINS[cd] 'todo') || (noteText CONTAINS[cd] 'to do')")
-        "(noteText CONTAINS[cd] 'todo') || (noteText CONTAINS[cd] 'to do')")
+      self.predicate = NSPredicate(format: "(noteText CONTAINS[cd] 'todo') || (noteText CONTAINS[cd] 'to do')")
+      // "(Goal.goalTitle CONTAINS[cd] 'todo') || (Goal.goalTitle CONTAINS[cd] 'to do') || (noteText CONTAINS[cd] 'todo') || (noteText CONTAINS[cd] 'to do')")
+      
       self.setupTableView()
     })
     ac.addAction(UIAlertAction(title: "Only show completed", style: .default) { [unowned self] _ in

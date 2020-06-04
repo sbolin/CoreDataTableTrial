@@ -55,7 +55,7 @@ class NoteCell: UITableViewCell {
   func handleCompletionCheck(for note: Note) {
     let completed = completedButton.isSelected
     if completed {
-      CoreDataController.sharedManager.markNoteCompleted(completed: completed, note: note)
+      CoreDataController.shared.markNoteCompleted(completed: completed, note: note)
       completedButton.tintColor = .systemGreen
     } else {
       completedButton.tintColor = .systemGray6

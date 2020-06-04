@@ -23,7 +23,7 @@ class NoteViewController: UIViewController {
   //MARK: - View Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    CoreDataController.sharedManager.createNotesIfNeeded()
+    CoreDataController.shared.createNotesIfNeeded()
     tableView.delegate = delegate
     setupTableView()
     navigationItem.title = "Note View"
@@ -31,7 +31,7 @@ class NoteViewController: UIViewController {
   
   func setupTableView() {
     if fetchedResultsController == nil {
-      fetchedResultsController = CoreDataController.sharedManager.fetchedNoteResultsController
+      fetchedResultsController = CoreDataController.shared.fetchedNoteResultsController
     }
     fetchedResultsController.fetchRequest.predicate = predicate
     do {
@@ -140,7 +140,7 @@ class NoteViewController: UIViewController {
       guard let goalTitle = noteTextField.text else { return }
       guard let noteText = textTextField.text else { return }
       
-      let _ = CoreDataController.sharedManager.addGoal(title: goalTitle, noteText: noteText)
+      let _ = CoreDataController.shared.addGoal(title: goalTitle, noteText: noteText)
             
       self.tableView.reloadData()
     }

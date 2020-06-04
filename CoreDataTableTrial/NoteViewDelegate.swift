@@ -11,7 +11,7 @@ import CoreData
 
 class NoteViewDelegate: NSObject, UITableViewDelegate {
   
-  let fetchController = CoreDataController.sharedManager.fetchedNoteResultsController
+  let fetchController = CoreDataController.shared.fetchedNoteResultsController
 
   //MARK: - UITableViewDelegate Methods
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -84,15 +84,15 @@ class NoteViewDelegate: NSObject, UITableViewDelegate {
   }
   
   func update(goalTitle: String, noteText: String, at indexPath: IndexPath) {
-    CoreDataController.sharedManager.updateGoal(updatedGoalTitle: goalTitle, updatedNoteText: noteText, at: indexPath)
+    CoreDataController.shared.updateGoal(updatedGoalTitle: goalTitle, updatedNoteText: noteText, at: indexPath)
   }
   
   func addNote(goalTitle: String, noteText: String, at indexPath: IndexPath) {
-    CoreDataController.sharedManager.addNote(text: noteText, at: indexPath)
+    CoreDataController.shared.addNote(text: noteText, at: indexPath)
   }
   
   func deleteGoal(goalToDelete: Goal) {
-    CoreDataController.sharedManager.deleteGoal(goal: goalToDelete)
+    CoreDataController.shared.deleteGoal(goal: goalToDelete)
   }
 }
 

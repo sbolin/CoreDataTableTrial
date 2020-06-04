@@ -74,11 +74,11 @@ class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSou
     switch editingStyle {
     case .delete:
       let note = fetchedResultsController.object(at: indexPath)
-      CoreDataController.sharedManager.deleteNote(note: note as! Note)
-      CoreDataController.sharedManager.saveContext()
+      CoreDataController.shared.deleteNote(note: note as! Note)
+      CoreDataController.shared.saveContext()
     // delete data
     case .insert:
-      CoreDataController.sharedManager.addNote(text: "New Note", at: indexPath)
+      CoreDataController.shared.addNote(text: "New Note", at: indexPath)
       tableView.beginUpdates()
       let rowToInsertAt = IndexPath.init(row: indexPath.row - 1, section: indexPath.section)
       tableView.insertRows(at: [rowToInsertAt], with: .automatic)
@@ -163,12 +163,12 @@ extension NoteViewDataSource: NoteCellDelegate {
   func noteCell(_ cell: NoteCell, completionChanged completion: Bool) {
 
     guard let indexPath = tableView.indexPathForSelectedRow else { return }
-    let goal = CoreDataController.sharedManager.fetchedGoalResultsController.object(at: indexPath)
-    let note = CoreDataController.sharedManager.fetchedNoteResultsController.object(at: indexPath)
+    let goal = CoreDataController.shared.fetchedGoalResultsController.object(at: indexPath)
+    let note = CoreDataController.shared.fetchedNoteResultsController.object(at: indexPath)
     
-    CoreDataController.sharedManager.markGoalCompleted(completed: completion, goal: goal)
-    CoreDataController.sharedManager.markNoteCompleted(completed: completion, note: note)
-    CoreDataController.sharedManager.saveContext()
+    CoreDataController.shared.markGoalCompleted(completed: completion, goal: goal)
+    CoreDataController.shared.markNoteCompleted(completed: completion, note: note)
+    CoreDataController.shared.saveContext()
   }
 }
 

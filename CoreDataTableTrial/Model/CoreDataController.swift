@@ -11,25 +11,17 @@ import CoreData
 
 class CoreDataController {
   
-  static let sharedManager = CoreDataController() // singleton
+  static let shared = CoreDataController() // singleton
   private init() {} // Prevent clients from creating another instance.
   
+  lazy var managedContext: NSManagedObjectContext = {
+    return self.persistentContainer.viewContext
+  }()
+  
   lazy var persistentContainer: NSPersistentContainer = {
-    
     let container = NSPersistentContainer(name: "Model")
-    
-    /* for migration
-     let description = NSPersistentStoreDescription()
-     description.shouldMigrateStoreAutomatically = true
-     description.shouldInferMappingModelAutomatically = true
-     container.persistentStoreDescriptions = [description]
-     end migration
-     */
-    
     container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-      
       container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-      
       if let error = error as NSError? {
         fatalError("Unresolved error \(error), \(error.userInfo)")
       }
@@ -167,7 +159,7 @@ class CoreDataController {
   //Delete Goal
   func deleteGoal(goal: Goal) {
     print("deleteGoal")
-    let context = CoreDataController.sharedManager.persistentContainer.viewContext
+    let context = CoreDataController.shared.persistentContainer.viewContext
     context.delete(goal)
     saveContext()
   }
@@ -175,7 +167,7 @@ class CoreDataController {
   //Delete Note
   func deleteNote(note: Note) {
     print("deleteNote")
-    let context = CoreDataController.sharedManager.persistentContainer.viewContext
+    let context = CoreDataController.shared.persistentContainer.viewContext
     let associatedGoal = note.goal
     let noteCount = associatedGoal.notes.count
     if noteCount < 2 {

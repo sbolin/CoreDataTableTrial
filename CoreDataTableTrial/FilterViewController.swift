@@ -58,21 +58,34 @@ class FilterViewController: UITableViewController {
   let lastYear = Date().addingTimeInterval(-60 * 60 * 24 * 365) as NSDate
   let allTime = Date().addingTimeInterval(-60 * 60 * 24 * 365 * 5) as NSDate // 5 year to show all notes.
   
- 
+  
   //MARK: keyword predicates
   lazy var goalKeywordPredicate: NSPredicate = {
-    return NSPredicate(format: "(#keyPath(Goal.goalTitle) CONTAINS[cd] 'goal') || (noteText CONTAINS[cd] 'goal')")
+    return NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(Goal.goalTitle), "goal")
   }()
   
-  lazy var todoKeywordPredicate: NSPredicate = {
-    return NSPredicate(format: "(#keyPath(Goal.goalTitle) CONTAINS[cd] 'todo') || (#keyPath(Goal.goalTitle) CONTAINS[cd] 'to do') || (noteText CONTAINS[cd] 'todo') || (noteText CONTAINS[cd] 'to do')")
-    // alts to try is above doesn't work:
-    // "#keyPath(Goal.goalTitle) CONTAINS[cd] 'todo'")
-    // "(noteText CONTAINS[cd] 'todo') || (noteText CONTAINS[cd] 'to do')"
+  lazy var noteKeywordPredicate: NSPredicate = {
+    return NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(Note.noteText), "goal")
   }()
   
-  lazy var fixKeywordPredicate: NSPredicate = {
-    return NSPredicate(format: "(#keyPath(Goal.goalTitle) CONTAINS[cd] 'fix') || (noteText CONTAINS[cd] 'fix')")
+  lazy var todoGoalKeywordPredicate: NSPredicate = {
+    let goalPredicate1 = NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(Goal.goalTitle),"todo")
+    let goalPredicate2 = NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(Goal.goalTitle),"to do")
+    return NSCompoundPredicate(type: .or, subpredicates: [goalPredicate1, goalPredicate2]) as NSPredicate
+  }()
+  
+  lazy var todoNoteKeywordPredicate: NSPredicate = {
+    let notePredicate1 = NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(Note.noteText),"todo")
+    let notePredicate2 = NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(Note.noteText),"to do")
+    return NSCompoundPredicate(type: .or, subpredicates: [notePredicate1, notePredicate2]) as NSPredicate
+  }()
+  
+  lazy var fixGoalKeywordPredicate: NSPredicate = {
+    return NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(Goal.goalTitle), "fix")
+  }()
+  
+  lazy var fixNoteKeywordPredicate: NSPredicate = {
+    return NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(Note.noteText), "fix")
   }()
   
   //MARK: Date Goal Predicates
@@ -83,7 +96,7 @@ class FilterViewController: UITableViewController {
   lazy var pastDayGoalPredicate: NSPredicate = {
     return NSPredicate(format: "%K > %@", #keyPath(Goal.goalDateCreated), lastDay)
   }()
-
+  
   lazy var pastWeekGoalPredicate: NSPredicate = {
     return NSPredicate(format: "%K > %@", #keyPath(Goal.goalDateCreated), lastWeek)
   }()
@@ -91,11 +104,10 @@ class FilterViewController: UITableViewController {
   lazy var pastMonthGoalPredicate: NSPredicate = {
     return NSPredicate(format: "%K > %@", #keyPath(Goal.goalDateCreated), lastMonth)
   }()
-
+  
   lazy var pastYearGoalPredicate: NSPredicate = {
     return NSPredicate(format: "%K > %@", #keyPath(Goal.goalDateCreated), lastYear)
   }()
-  
   
   //MARK: Date Note Predicates
   lazy var allNotePredicate: NSPredicate = {
@@ -129,7 +141,7 @@ class FilterViewController: UITableViewController {
     return NSSortDescriptor(key: #keyPath(Goal.goalDateCreated), ascending: true, selector: dateSelectror)
   }()
   
-
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -143,14 +155,21 @@ class FilterViewController: UITableViewController {
     populateAllLabel()
   }
 }
-  
-  // MARK: - Table view data source
+
+// MARK: - IBActions
 extension FilterViewController {
   
   @IBAction func search(_ sender: UIBarButtonItem) {
     delegate?.filterViewController(filter: self, didSelectPredicate: selectedPredicate, sortDescriptor: selectedSortDescriptor)
     dismiss(animated: true)
   }
+  
+  @IBAction func unwindToVenueListViewController(_ segue: UIStoryboardSegue) {
+  }
+}
+ 
+// MARK - UITableViewDelegate
+extension FilterViewController {
   
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
@@ -161,9 +180,9 @@ extension FilterViewController {
     case goalKeywordCell:
       selectedPredicate = goalKeywordPredicate
     case todoKeywordCell:
-      selectedPredicate = todoKeywordPredicate
+      selectedPredicate = todoGoalKeywordPredicate
     case fixKeywordCell:
-      selectedPredicate = fixKeywordPredicate
+      selectedPredicate = fixGoalKeywordPredicate
     case yearCell:
       selectedPredicate = pastYearGoalPredicate
     case monthCell:
@@ -189,136 +208,239 @@ extension FilterViewController {
   }
   
   func populateGoalCategoryLabel() {
+    var labelText: String = ""
+    
     let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
     goalFetchRequest.resultType = .countResultType
     goalFetchRequest.predicate = goalKeywordPredicate
     
     do {
-      let countResult = try CoreDataController.sharedManager.persistentContainer.viewContext.fetch(goalFetchRequest)
-      
-      let count = countResult.first!.intValue
-      let pluralized = count == 1 ? "item" : "items"
-      goalCategoryLabel.text = "\(count) Goal \(pluralized)"
+      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
+      let goalCount = goalCountResult.first!.intValue
+      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
+      labelText = "\(goalCount) \(goalPluralized) / "
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
+    
+    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
+    noteFetchRequest.resultType = .countResultType
+    noteFetchRequest.predicate = noteKeywordPredicate
+    
+    do {
+      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
+      let noteCount = noteCountResult.first!.intValue
+      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      labelText += "\(noteCount) \(notePluralized)"
+    } catch let error as NSError {
+      print("count not fetched \(error), \(error.userInfo)")
+    }
+    goalCategoryLabel.text = labelText
   }
   
   func populateTodoCategoryLabel() {
+    var labelText: String = ""
+    
     let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
     goalFetchRequest.resultType = .countResultType
-    goalFetchRequest.predicate = todoKeywordPredicate
+    goalFetchRequest.predicate = todoGoalKeywordPredicate
     
     do {
-      let countResult = try CoreDataController.sharedManager.persistentContainer.viewContext.fetch(goalFetchRequest)
-      
-      let count = countResult.first!.intValue
-      let pluralized = count == 1 ? "item" : "items"
-      todoCategoryLabel.text = "\(count) To Do \(pluralized)"
+      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
+      let goalCount = goalCountResult.first!.intValue
+      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
+      labelText = "\(goalCount) \(goalPluralized) / "
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
+    
+    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
+    noteFetchRequest.resultType = .countResultType
+    noteFetchRequest.predicate = todoNoteKeywordPredicate
+    
+    do {
+      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
+      let noteCount = noteCountResult.first!.intValue
+      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      labelText += "\(noteCount) \(notePluralized)"
+    } catch let error as NSError {
+      print("count not fetched \(error), \(error.userInfo)")
+    }
+    todoCategoryLabel.text = labelText
   }
   
   func populateFixCategoryLabel() {
+    var labelText: String = ""
+
     let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
     goalFetchRequest.resultType = .countResultType
-    goalFetchRequest.predicate = fixKeywordPredicate
+    goalFetchRequest.predicate = fixGoalKeywordPredicate
     
     do {
-      let countResult = try CoreDataController.sharedManager.persistentContainer.viewContext.fetch(goalFetchRequest)
-      
-      let count = countResult.first!.intValue
-      let pluralized = count == 1 ? "item" : "items"
-      todoCategoryLabel.text = "\(count) To Do \(pluralized)"
+      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
+      let goalCount = goalCountResult.first!.intValue
+      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
+      labelText = "\(goalCount) \(goalPluralized) / "
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
+    
+    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
+    noteFetchRequest.resultType = .countResultType
+    noteFetchRequest.predicate = fixNoteKeywordPredicate
+    
+    do {
+      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
+      let noteCount = noteCountResult.first!.intValue
+      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      labelText += "\(noteCount) \(notePluralized)"
+    } catch let error as NSError {
+      print("count not fetched \(error), \(error.userInfo)")
+    }
+    fixCategoryLabel.text = labelText
   }
   
   func populatePastYearLabel() {
+    var labelText: String = ""
+    
     let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
     goalFetchRequest.resultType = .countResultType
     goalFetchRequest.predicate = pastYearGoalPredicate
     
     do {
-      let countResult = try CoreDataController.sharedManager.persistentContainer.viewContext.fetch(goalFetchRequest)
-      
-      let count = countResult.first!.intValue
-      let pluralized = count == 1 ? "Goal" : "Goals"
-      todoCategoryLabel.text = "\(count) \(pluralized)"
+      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
+      let goalCount = goalCountResult.first!.intValue
+      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
+      labelText = "\(goalCount) \(goalPluralized) / "
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
+    
+    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
+    noteFetchRequest.resultType = .countResultType
+    noteFetchRequest.predicate = pastYearNotePredicate
+    
+    do {
+      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
+      let noteCount = noteCountResult.first!.intValue
+      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      labelText += "\(noteCount) \(notePluralized)"
+    } catch let error as NSError {
+      print("count not fetched \(error), \(error.userInfo)")
+    }
+    pastYearLabel.text = labelText
   }
   
   func populatePastMonthLabel() {
+    var labelText: String = ""
+
     let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
     goalFetchRequest.resultType = .countResultType
     goalFetchRequest.predicate = pastMonthGoalPredicate
     
     do {
-      let countResult = try CoreDataController.sharedManager.persistentContainer.viewContext.fetch(goalFetchRequest)
-      
-      let count = countResult.first!.intValue
-      let pluralized = count == 1 ? "Goal" : "Goals"
-      todoCategoryLabel.text = "\(count) \(pluralized)"
+      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
+      let goalCount = goalCountResult.first!.intValue
+      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
+      labelText = "\(goalCount) \(goalPluralized) / "
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
+      
+    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
+    noteFetchRequest.resultType = .countResultType
+    noteFetchRequest.predicate = pastMonthNotePredicate
+      
+    do {
+      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
+      let noteCount = noteCountResult.first!.intValue
+      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      labelText += "\(noteCount) \(notePluralized)"
+    } catch let error as NSError {
+      print("count not fetched \(error), \(error.userInfo)")
+    }
+    pastMonthLabel.text = labelText
   }
   
   func populatePastWeekLabel() {
+    var labelText: String = ""
+    
     let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
     goalFetchRequest.resultType = .countResultType
     goalFetchRequest.predicate = pastWeekGoalPredicate
     
     do {
-      let countResult = try CoreDataController.sharedManager.persistentContainer.viewContext.fetch(goalFetchRequest)
-      
-      let count = countResult.first!.intValue
-      let pluralized = count == 1 ? "Goal" : "Goals"
-      todoCategoryLabel.text = "\(count) \(pluralized)"
+      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
+      let goalCount = goalCountResult.first!.intValue
+      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
+      labelText = "\(goalCount) \(goalPluralized) / "
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
+    
+    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
+    noteFetchRequest.resultType = .countResultType
+    noteFetchRequest.predicate = pastWeekNotePredicate
+    
+    do {
+      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
+      let noteCount = noteCountResult.first!.intValue
+      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      labelText += "\(noteCount) \(notePluralized)"
+    } catch let error as NSError {
+      print("count not fetched \(error), \(error.userInfo)")
+    }
+    pastWeekLabel.text = labelText
   }
   
   func populateTodayLabel() {
-    let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
+    let goalFetchRequest = NSFetchRequest<Goal>(entityName: "Goal")
     let createdAtDescriptor = NSSortDescriptor(keyPath: \Goal.goalDateCreated, ascending: false)
-    goalFetchRequest.resultType = .countResultType
     goalFetchRequest.predicate = nil // pastDayGoalPredicate
     goalFetchRequest.sortDescriptors = [createdAtDescriptor]
     goalFetchRequest.fetchLimit = 1
     
-    
     do {
-      let countResult = try CoreDataController.sharedManager.persistentContainer.viewContext.fetch(goalFetchRequest)
-      
-      let count = countResult.first!.intValue
-      let pluralized = count == 1 ? "Goal" : "Goals"
-      todoCategoryLabel.text = "\(count) \(pluralized)"
+      let result = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
+      let count = result.first!.notes.count
+      let pluralized = count == 1 ? "Item" : "Items"
+      todoCategoryLabel.text = "1 Goal / \(count) \(pluralized)"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
   }
   
   func populateAllLabel() {
+    var labelText: String = ""
+    
     let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
     goalFetchRequest.resultType = .countResultType
     goalFetchRequest.predicate = nil // allGoalPredicate
     goalFetchRequest.fetchLimit = 0
     
     do {
-      let countResult = try CoreDataController.sharedManager.persistentContainer.viewContext.fetch(goalFetchRequest)
-      
-      let count = countResult.first!.intValue
-      let pluralized = count == 1 ? "Goal" : "Goals"
-      todoCategoryLabel.text = "\(count) \(pluralized)"
+      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
+      let goalCount = goalCountResult.first!.intValue
+      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
+      labelText = "\(goalCount) \(goalPluralized) / "
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
+    
+    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
+    noteFetchRequest.resultType = .countResultType
+    noteFetchRequest.predicate = nil // allGoalPredicate
+    noteFetchRequest.fetchLimit = 0
+    
+    do {
+      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
+      let noteCount = noteCountResult.first!.intValue
+      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      labelText += "\(noteCount) \(notePluralized)"
+    } catch let error as NSError {
+      print("count not fetched \(error), \(error.userInfo)")
+    }
+    allLabel.text = labelText
   }
   
 }

@@ -17,6 +17,11 @@ class GoalViewController: UIViewController {
   var dataSource: GoalViewDataSource<Note, GoalViewController>!
   var fetchedResultsController: NSFetchedResultsController<Note>!
   var predicate: NSPredicate?
+ 
+  var fetchRequest: NSFetchRequest<Goal>?
+  var goals: [Goal] = []
+  var asyncFetchRequest: NSAsynchronousFetchResult<Goal>?
+  
   
   //MARK: - IBOutlets
   @IBOutlet weak var tableView: UITableView!
@@ -32,7 +37,7 @@ class GoalViewController: UIViewController {
   
   func setupTableView() {
     if fetchedResultsController == nil {
-      fetchedResultsController = CoreDataController.sharedManager.fetchedNoteGoalResultsController
+      fetchedResultsController = CoreDataController.shared.fetchedNoteGoalResultsController
     }
     fetchedResultsController.fetchRequest.predicate = predicate
     do {
@@ -44,6 +49,7 @@ class GoalViewController: UIViewController {
     dataSource = GoalViewDataSource(tableView: tableView, fetchedResultsController: fetchedResultsController, delegate: self)
   }
   
+  //MARK: - Navigation
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     guard segue.identifier == filterViewControllerSegueIdentifier,
       let navController = segue.destination as? UINavigationController,
@@ -51,19 +57,13 @@ class GoalViewController: UIViewController {
     else {
       return
     }
-    
+    filterVC.delegate = self
     
   }
-  
-  @IBAction func unwindToVenueListViewController(_ segue: UIStoryboardSegue) {
-  }
-  
-  
-  
   
   //MARK: - IBActions
   @IBAction func filterTapped(_ sender: UIBarButtonItem) {
-    updateDataSource()
+//    updateDataSource()
   }
   
   //MARK: - IBAction Helper functions
@@ -130,6 +130,21 @@ class GoalViewController: UIViewController {
   }
 }
 
+extension GoalViewController {
+  func fetchAndReload() {
+    guard let fetchRequest = fetchRequest else {
+      return
+    }
+    
+    do {
+      goals = try CoreDataController.shared.persistentContainer.viewContext.fetch(fetchRequest)
+      tableView.reloadData()
+    } catch let error as NSError {
+      print("Could not fetch \(error), \(error.userInfo)")
+    }
+  }
+}
+
 //MARK: - Delegate Methods
 extension GoalViewController: GoalViewDataSourceDelegate {
   func configureGoalCell(at indexPath: IndexPath, _ cell: GoalCell, for object: Goal) {
@@ -139,4 +154,22 @@ extension GoalViewController: GoalViewDataSourceDelegate {
   func configureNoteCell(at indexPath: IndexPath, _ cell: NoteCell, for object: Note) {
     cell.configureNoteCell(at: indexPath, for: object)
   }
+}
+
+extension GoalViewController: FilterViewControllerDelegate {
+  func filterViewController(filter: FilterViewController, didSelectPredicate predicate: NSPredicate?, sortDescriptor: NSSortDescriptor?) {
+    
+    guard let fetchRequest = fetchRequest else {
+      return
+    }
+    fetchRequest.predicate = nil
+    fetchRequest.sortDescriptors = nil
+    fetchRequest.predicate = predicate
+    
+    if let sort = sortDescriptor {
+      fetchRequest.sortDescriptors = [sort]
+    }
+    fetchAndReload()
+  }
+  
 }

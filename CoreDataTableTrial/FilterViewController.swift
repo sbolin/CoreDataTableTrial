@@ -109,6 +109,10 @@ class FilterViewController: UITableViewController {
     return NSPredicate(format: "%K > %@", #keyPath(Goal.goalDateCreated), lastYear)
   }()
   
+  lazy var goalCompletedPredicate: NSPredicate = {
+    return NSPredicate(format: "%K == %@", #keyPath(Goal.goalCompleted), "TRUE")
+  }()
+  
   //MARK: Date Note Predicates
   lazy var allNotePredicate: NSPredicate = {
     return NSPredicate(format: "%K > %@", #keyPath(Note.noteDateCreated), allTime)
@@ -129,6 +133,12 @@ class FilterViewController: UITableViewController {
   lazy var pastYearNotePredicate: NSPredicate = {
     return NSPredicate(format: "%K > %@", #keyPath(Note.noteDateCreated), lastYear)
   }()
+  
+  lazy var noteCompletedPredicate: NSPredicate = {
+    return NSPredicate(format: "%K == %@", #keyPath(Note.noteCompleted), "TRUE")
+  }()
+  
+  
   
   //MARK: Sort Predicates
   lazy var nameSortDescriptor: NSSortDescriptor = {
@@ -230,7 +240,7 @@ extension FilterViewController {
     do {
       let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
       let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
       labelText += "\(noteCount) \(notePluralized)"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
@@ -261,7 +271,7 @@ extension FilterViewController {
     do {
       let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
       let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
       labelText += "\(noteCount) \(notePluralized)"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
@@ -292,7 +302,7 @@ extension FilterViewController {
     do {
       let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
       let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
       labelText += "\(noteCount) \(notePluralized)"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
@@ -323,7 +333,7 @@ extension FilterViewController {
     do {
       let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
       let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
       labelText += "\(noteCount) \(notePluralized)"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
@@ -354,7 +364,7 @@ extension FilterViewController {
     do {
       let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
       let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
       labelText += "\(noteCount) \(notePluralized)"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
@@ -385,7 +395,7 @@ extension FilterViewController {
     do {
       let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
       let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Item" : "Items"
+      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
       labelText += "\(noteCount) \(notePluralized)"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
@@ -403,7 +413,7 @@ extension FilterViewController {
     do {
       let result = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
       let count = result.first!.notes.count
-      let pluralized = count == 1 ? "Item" : "Items"
+      let pluralized = count == 1 ? "Task" : "Tasks"
       todoCategoryLabel.text = "1 Goal / \(count) \(pluralized)"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
@@ -435,8 +445,34 @@ extension FilterViewController {
     do {
       let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
       let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Item" : "Items"
-      labelText += "\(noteCount) \(notePluralized)"
+      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
+      labelText += "\(noteCount) \(notePluralized) - "
+    } catch let error as NSError {
+      print("count not fetched \(error), \(error.userInfo)")
+    }
+    
+    let goalCompletedFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
+    goalCompletedFetchRequest.resultType = .countResultType
+    goalCompletedFetchRequest.predicate = goalCompletedPredicate
+    
+    do {
+      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalCompletedFetchRequest)
+      let goalCount = goalCountResult.first!.intValue
+      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
+      labelText += "\(goalCount) \(goalPluralized) Completed / "
+    } catch let error as NSError {
+      print("count not fetched \(error), \(error.userInfo)")
+    }
+    
+    let noteCompletedFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
+    noteCompletedFetchRequest.resultType = .countResultType
+    noteCompletedFetchRequest.predicate = noteCompletedPredicate
+    
+    do {
+      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteCompletedFetchRequest)
+      let noteCount = noteCountResult.first!.intValue
+      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
+      labelText += "\(noteCount) \(notePluralized) Completed"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }

@@ -24,6 +24,7 @@ class NoteViewDelegate: NSObject, UITableViewDelegate {
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
+    print("tableView didSelectRowAt tapped: \(indexPath)")
     let note = fetchController.object(at: indexPath)
     let goal = note.goal
 

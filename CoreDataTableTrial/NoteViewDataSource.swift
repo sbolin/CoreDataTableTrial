@@ -161,12 +161,10 @@ class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSou
 
 extension NoteViewDataSource: NoteCellDelegate {
   func noteCell(_ cell: NoteCell, completionChanged completion: Bool) {
-
-    guard let indexPath = tableView.indexPathForSelectedRow else { return }
-    let goal = CoreDataController.shared.fetchedGoalResultsController.object(at: indexPath)
+    
+    guard let indexPath = tableView.indexPath(for: cell) else { return }
     let note = CoreDataController.shared.fetchedNoteResultsController.object(at: indexPath)
     
-    CoreDataController.shared.markGoalCompleted(completed: completion, goal: goal)
     CoreDataController.shared.markNoteCompleted(completed: completion, note: note)
     CoreDataController.shared.saveContext()
   }

@@ -54,7 +54,7 @@ class GoalViewDataSource<Result: NSFetchRequestResult, Delegate: GoalViewDataSou
     let dateFormatterPrint = DateFormatter()
     dateFormatterPrint.dateFormat = "dd-MMM-yyyy"
     guard let date = dateFormatterGet.date(from: sectionInfo.name) else { return "No Date" }
-    let sectionTitle = dateFormatterPrint.string(from: date) + goalTitle
+    let sectionTitle = dateFormatterPrint.string(from: date) + " " + goalTitle
     return sectionTitle
 
   }
@@ -70,13 +70,13 @@ class GoalViewDataSource<Result: NSFetchRequestResult, Delegate: GoalViewDataSou
     if indexPath.row == 0 {
       let noteObject = self.fetchedResultsController.object(at: indexPath) as! Note
       let goalObject = noteObject.goal
-      let goalCell = tableView.dequeueReusableCell(withIdentifier: "GoalCell" , for: indexPath) as! GoalCell
+      let goalCell = tableView.dequeueReusableCell(withIdentifier: GoalCell.reuseIdentifier , for: indexPath) as! GoalCell
       delegate?.configureGoalCell(at: indexPath, goalCell, for: goalObject)
       return goalCell
     }
     let previousIndex = IndexPath(row: indexPath.row - 1, section: indexPath.section)
     let noteObject = self.fetchedResultsController.object(at: previousIndex) as! Note
-    let noteCell = tableView.dequeueReusableCell(withIdentifier: "NoteCell", for: indexPath) as! NoteCell
+    let noteCell = tableView.dequeueReusableCell(withIdentifier: NoteCell.reuseIdentifier, for: indexPath) as! NoteCell
     delegate?.configureNoteCell(at: indexPath, noteCell, for: noteObject)
     return noteCell
   }

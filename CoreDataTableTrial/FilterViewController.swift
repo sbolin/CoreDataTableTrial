@@ -110,7 +110,7 @@ class FilterViewController: UITableViewController {
   }()
   
   lazy var goalCompletedPredicate: NSPredicate = {
-    return NSPredicate(format: "%K == %@", #keyPath(Goal.goalCompleted), "TRUE")
+    return NSPredicate(format: "%K = %d", #keyPath(Goal.goalCompleted), true)
   }()
   
   //MARK: Date Note Predicates
@@ -135,7 +135,7 @@ class FilterViewController: UITableViewController {
   }()
   
   lazy var noteCompletedPredicate: NSPredicate = {
-    return NSPredicate(format: "%K == %@", #keyPath(Note.noteCompleted), "TRUE")
+    return NSPredicate(format: "%K = %d", #keyPath(Note.noteCompleted), true)
   }()
   
   
@@ -174,7 +174,8 @@ extension FilterViewController {
     dismiss(animated: true)
   }
   
-  @IBAction func unwindToVenueListViewController(_ segue: UIStoryboardSegue) {
+  @IBAction func unwindToGoalViewController(_ segue: UIStoryboardSegue) {
+
   }
 }
  
@@ -421,6 +422,13 @@ extension FilterViewController {
   }
   
   func populateAllLabel() {
+    var allGoalCount: Int = 0
+    var allNoteCount: Int = 0
+    var doneGoalCount: Int = 0
+    var doneNoteCount: Int = 0
+    
+    
+    
     var labelText: String = ""
     
     let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
@@ -430,9 +438,9 @@ extension FilterViewController {
     
     do {
       let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
-      let goalCount = goalCountResult.first!.intValue
-      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
-      labelText = "\(goalCount) \(goalPluralized) / "
+      allGoalCount = goalCountResult.first!.intValue
+      let goalPluralized = allGoalCount == 1 ? "Goal" : "Goals"
+      labelText = "\(allGoalCount) \(goalPluralized) / "
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
@@ -444,9 +452,9 @@ extension FilterViewController {
     
     do {
       let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
-      let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
-      labelText += "\(noteCount) \(notePluralized) - "
+      allNoteCount = noteCountResult.first!.intValue
+      let notePluralized = allNoteCount == 1 ? "Task" : "Tasks"
+      labelText += "\(allNoteCount) \(notePluralized) - "
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
@@ -456,10 +464,10 @@ extension FilterViewController {
     goalCompletedFetchRequest.predicate = goalCompletedPredicate
     
     do {
-      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalCompletedFetchRequest)
-      let goalCount = goalCountResult.first!.intValue
-      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
-      labelText += "\(goalCount) \(goalPluralized) Completed / "
+      let goalCompletedResult = try CoreDataController.shared.managedContext.fetch(goalCompletedFetchRequest)
+      doneGoalCount = goalCompletedResult.first!.intValue
+      let goalPluralized = doneGoalCount == 1 ? "Goal" : "Goals"
+      labelText += "\(doneGoalCount) \(goalPluralized) Completed / "
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
@@ -469,10 +477,10 @@ extension FilterViewController {
     noteCompletedFetchRequest.predicate = noteCompletedPredicate
     
     do {
-      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteCompletedFetchRequest)
-      let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
-      labelText += "\(noteCount) \(notePluralized) Completed"
+      let noteCompletedResult = try CoreDataController.shared.managedContext.fetch(noteCompletedFetchRequest)
+      doneNoteCount = noteCompletedResult.first!.intValue
+      let notePluralized = doneNoteCount == 1 ? "Task" : "Tasks"
+      labelText += "\(doneNoteCount) \(notePluralized) Completed"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }

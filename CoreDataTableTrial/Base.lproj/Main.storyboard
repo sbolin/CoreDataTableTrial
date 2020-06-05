@@ -603,7 +603,7 @@
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="lNC-lR-4Fi">
                             <color key="tintColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
-                                <segue destination="pnx-SY-iYR" kind="unwind" unwindAction="unwindToVenueListViewController:" id="SGf-SA-3us"/>
+                                <segue destination="pnx-SY-iYR" kind="unwind" unwindAction="unwindToGoalViewController:" id="J0G-89-f2U"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="search" id="ajI-ef-76W">
@@ -639,7 +639,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uag-7n-6gZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="pnx-SY-iYR" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3364" y="135"/>
+            <point key="canvasLocation" x="3428" y="137"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="yO4-k4-Acd">

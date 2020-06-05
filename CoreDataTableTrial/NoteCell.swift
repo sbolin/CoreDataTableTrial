@@ -66,11 +66,7 @@ class NoteCell: UITableViewCell {
   @IBAction func completedTapped(_ sender: UIButton) {
     completedButton.isSelected.toggle()
     toggleButtonColor()
-    // update data model
-    print("To Do Button Tapped")
-    print("completedButton.isSelected = \(completedButton.isSelected)")
-    print("cellTapped: \(self)")
-    
+    // update data model    
     noteCellDelegate?.noteCell(self, completionChanged: completedButton.isSelected)
   }
 }

@@ -70,7 +70,7 @@ class GoalViewDataSource<Result: NSFetchRequestResult, Delegate: GoalViewDataSou
     if indexPath.row == 0 {
       let noteObject = self.fetchedResultsController.object(at: indexPath) as! Note
       let goalObject = noteObject.goal
-      let goalCell = tableView.dequeueReusableCell(withIdentifier: GoalCell.reuseIdentifier , for: indexPath) as! GoalCell
+      let goalCell = tableView.dequeueReusableCell(withIdentifier: GoalCell.reuseIdentifier, for: indexPath) as! GoalCell
       delegate?.configureGoalCell(at: indexPath, goalCell, for: goalObject)
       return goalCell
     }

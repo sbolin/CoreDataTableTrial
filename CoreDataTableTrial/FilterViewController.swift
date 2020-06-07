@@ -55,8 +55,9 @@ class FilterViewController: UITableViewController {
   let lastDay = Date().addingTimeInterval(-60 * 60 * 24) as NSDate
   let lastWeek = Date().addingTimeInterval(-60 * 60 * 24 * 7) as NSDate
   let lastMonth = Date().addingTimeInterval(-60 * 60 * 24 * 30) as NSDate
+  let last6Month = Date().addingTimeInterval(-60 * 60 * 24 * 183) as NSDate
   let lastYear = Date().addingTimeInterval(-60 * 60 * 24 * 365) as NSDate
-  let allTime = Date().addingTimeInterval(-60 * 60 * 24 * 365 * 5) as NSDate // 5 year to show all notes.
+  let allTime = Date().addingTimeInterval(-60 * 60 * 24 * 365 * 10) as NSDate // 10 year to show all notes.
   
   
   //MARK: keyword predicates
@@ -74,7 +75,7 @@ class FilterViewController: UITableViewController {
     return NSCompoundPredicate(type: .or, subpredicates: [goalPredicate1, goalPredicate2]) as NSPredicate
   }()
   
-  lazy var todoNoteKeywordPredicate: NSPredicate = {
+  lazy var todoKeywordPredicate: NSPredicate = {
     let notePredicate1 = NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(Note.noteText),"todo")
     let notePredicate2 = NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(Note.noteText),"to do")
     return NSCompoundPredicate(type: .or, subpredicates: [notePredicate1, notePredicate2]) as NSPredicate
@@ -105,6 +106,10 @@ class FilterViewController: UITableViewController {
     return NSPredicate(format: "%K > %@", #keyPath(Goal.goalDateCreated), lastMonth)
   }()
   
+  lazy var past6MonthGoalPredicate: NSPredicate = {
+    return NSPredicate(format: "%K > %@", #keyPath(Goal.goalDateCreated), last6Month)
+  }()
+  
   lazy var pastYearGoalPredicate: NSPredicate = {
     return NSPredicate(format: "%K > %@", #keyPath(Goal.goalDateCreated), lastYear)
   }()
@@ -130,6 +135,10 @@ class FilterViewController: UITableViewController {
     return NSPredicate(format: "%K > %@", #keyPath(Note.noteDateCreated), lastMonth)
   }()
   
+  lazy var past6MonthNotePredicate: NSPredicate = {
+    return NSPredicate(format: "%K > %@", #keyPath(Note.noteDateCreated), last6Month)
+  }()
+  
   lazy var pastYearNotePredicate: NSPredicate = {
     return NSPredicate(format: "%K > %@", #keyPath(Note.noteDateCreated), lastYear)
   }()
@@ -137,7 +146,6 @@ class FilterViewController: UITableViewController {
   lazy var noteCompletedPredicate: NSPredicate = {
     return NSPredicate(format: "%K = %d", #keyPath(Note.noteCompleted), true)
   }()
-  
   
   
   //MARK: Sort Predicates
@@ -154,15 +162,94 @@ class FilterViewController: UITableViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    populateLabels()
+
+  }
+  func populateLabels() {
+    var firstLabel: String = ""
+    var secondLabel: String = ""
+    var thirdLabel: String = ""
+    var fourthLabel: String = ""
     
-    populateGoalCategoryLabel()
-    populateTodoCategoryLabel()
-    populateFixCategoryLabel()
-    populatePastYearLabel()
-    populatePastMonthLabel()
-    populatePastWeekLabel()
+//    populateGoalCategoryLabel()
+    guard let goalGoalCount = getEntityCount(for: "Goal", with: goalKeywordPredicate) else { return }
+    guard let goalItemCount = getEntityCount(for: "Note", with: noteKeywordPredicate) else { return }
+    firstLabel = makeLabel(count: goalGoalCount, quantifier: "Goal")
+    secondLabel = makeContinuingLabel(firstLabel: firstLabel, count: goalItemCount, quantifier: "Item")
+    goalCategoryLabel.text = secondLabel
+    
+//    populateTodoCategoryLabel()
+    guard let todoGoalCount = getEntityCount(for: "Goal", with: todoGoalKeywordPredicate) else { return }
+    guard let todoItemCount = getEntityCount(for: "Note", with: todoKeywordPredicate) else { return }
+    firstLabel = makeLabel(count: todoGoalCount, quantifier: "Goal")
+    secondLabel = makeContinuingLabel(firstLabel: firstLabel, count: todoItemCount, quantifier: "Item")
+    todoCategoryLabel.text = secondLabel
+    
+//    populateFixCategoryLabel()
+    guard let fixGoalCount = getEntityCount(for: "Goal", with: fixGoalKeywordPredicate) else { return }
+    guard let fixItemCount = getEntityCount(for: "Note", with: fixNoteKeywordPredicate) else { return }
+    firstLabel = makeLabel(count: fixGoalCount, quantifier: "Goal")
+    secondLabel = makeContinuingLabel(firstLabel: firstLabel, count: fixItemCount, quantifier: "Item")
+    fixCategoryLabel.text = secondLabel
+    
+//    populatePastYearLabel()
+    guard let yearGoalCount = getEntityCount(for: "Goal", with: pastYearGoalPredicate) else { return }
+    guard let yearItemCount = getEntityCount(for: "Note", with: pastYearNotePredicate) else { return }
+    firstLabel = makeLabel(count: yearGoalCount, quantifier: "Goal")
+    secondLabel = makeContinuingLabel(firstLabel: firstLabel, count: yearItemCount, quantifier: "Item")
+    
+    let yearGoalCompletedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [pastYearGoalPredicate, goalCompletedPredicate])
+    let yearItemCompletedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [pastYearNotePredicate, noteCompletedPredicate])
+    
+    guard let doneYearGoalCount = getEntityCount(for: "Goal", with: yearGoalCompletedPredicate) else { return }
+    guard let doneYearItemCount = getEntityCount(for: "Note", with: yearItemCompletedPredicate) else { return }
+    thirdLabel = makeLabel(count: doneYearGoalCount, quantifier: "Goal")
+    fourthLabel = makeContinuingLabel(firstLabel: thirdLabel, count: doneYearItemCount, quantifier: "Item")
+    pastYearLabel.text = secondLabel + " " + fourthLabel + " Completed"
+    
+ //   populatePastMonthLabel()
+    guard let monthGoalCount = getEntityCount(for: "Goal", with: pastMonthGoalPredicate) else { return }
+    guard let monthItemCount = getEntityCount(for: "Note", with: pastMonthNotePredicate) else { return }
+    firstLabel = makeLabel(count: monthGoalCount, quantifier: "Goal")
+    secondLabel = makeContinuingLabel(firstLabel: firstLabel, count: monthItemCount, quantifier: "Item")
+    
+    let monthGoalCompletedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [pastMonthGoalPredicate, goalCompletedPredicate])
+    let monthItemCompletedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [pastMonthNotePredicate, noteCompletedPredicate])
+    
+    guard let doneMonthGoalCount = getEntityCount(for: "Goal", with: monthGoalCompletedPredicate) else { return }
+    guard let doneMonthItemCount = getEntityCount(for: "Note", with: monthItemCompletedPredicate) else { return }
+    thirdLabel = makeLabel(count: doneMonthGoalCount, quantifier: "Goal")
+    fourthLabel = makeContinuingLabel(firstLabel: thirdLabel, count: doneMonthItemCount, quantifier: "Item")
+    pastMonthLabel.text = secondLabel + " " + fourthLabel + " Completed"
+    
+//    populatePastWeekLabel()
+    guard let weekGoalCount = getEntityCount(for: "Goal", with: pastWeekGoalPredicate) else { return }
+    guard let weekItemCount = getEntityCount(for: "Note", with: pastWeekNotePredicate) else { return }
+    firstLabel = makeLabel(count: weekGoalCount, quantifier: "Goal")
+    secondLabel = makeContinuingLabel(firstLabel: firstLabel, count: weekItemCount, quantifier: "Item")
+    
+    let weekGoalCompletedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [pastWeekGoalPredicate, goalCompletedPredicate])
+    let weekItemCompletedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [pastWeekNotePredicate, noteCompletedPredicate])
+    
+    guard let doneWeekGoalCount = getEntityCount(for: "Goal", with: weekGoalCompletedPredicate) else { return }
+    guard let doneWeekItemCount = getEntityCount(for: "Note", with: weekItemCompletedPredicate) else { return }
+    thirdLabel = makeLabel(count: doneWeekGoalCount, quantifier: "Goal")
+    fourthLabel = makeContinuingLabel(firstLabel: thirdLabel, count: doneWeekItemCount, quantifier: "Item")
+    pastWeekLabel.text = secondLabel + " " + fourthLabel + " Completed"
+    
     populateTodayLabel()
-    populateAllLabel()
+
+    //    populateAllLabel()
+    guard let allGoalCount = getEntityCount(for: "Goal", with: allGoalPredicate) else { return }
+    guard let allItemCount = getEntityCount(for: "Note", with: allNotePredicate) else { return }
+    firstLabel = makeLabel(count: allGoalCount, quantifier: "Goal")
+    secondLabel = makeContinuingLabel(firstLabel: firstLabel, count: allItemCount, quantifier: "Item")
+
+    guard let doneGoalCount = getEntityCount(for: "Goal", with: goalCompletedPredicate) else { return }
+    guard let doneItemCount = getEntityCount(for: "Note", with: noteCompletedPredicate) else { return }
+    thirdLabel = makeLabel(count: doneGoalCount, quantifier: "Goal")
+    fourthLabel = makeContinuingLabel(firstLabel: thirdLabel, count: doneItemCount, quantifier: "Item")
+    allLabel.text = secondLabel + " " + fourthLabel + " Completed"
   }
 }
 
@@ -218,192 +305,38 @@ extension FilterViewController {
     cell.accessoryType = .checkmark
   }
   
-  func populateGoalCategoryLabel() {
-    var labelText: String = ""
+  // Typically Count Case
+  func getEntityCount(for entityName: String, with predicate: NSPredicate) -> Int? {
+    let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: entityName)
     
-    let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
+    goalFetchRequest.predicate = nil
+    goalFetchRequest.fetchLimit = 0
+    
     goalFetchRequest.resultType = .countResultType
-    goalFetchRequest.predicate = goalKeywordPredicate
+    goalFetchRequest.predicate = predicate
     
     do {
-      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
-      let goalCount = goalCountResult.first!.intValue
-      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
-      labelText = "\(goalCount) \(goalPluralized) / "
+      let countResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
+      return countResult.first!.intValue
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
+      return nil
     }
-    
-    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
-    noteFetchRequest.resultType = .countResultType
-    noteFetchRequest.predicate = noteKeywordPredicate
-    
-    do {
-      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
-      let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
-      labelText += "\(noteCount) \(notePluralized)"
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    goalCategoryLabel.text = labelText
   }
   
-  func populateTodoCategoryLabel() {
-    var labelText: String = ""
-    
-    let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
-    goalFetchRequest.resultType = .countResultType
-    goalFetchRequest.predicate = todoGoalKeywordPredicate
-    
-    do {
-      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
-      let goalCount = goalCountResult.first!.intValue
-      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
-      labelText = "\(goalCount) \(goalPluralized) / "
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    
-    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
-    noteFetchRequest.resultType = .countResultType
-    noteFetchRequest.predicate = todoNoteKeywordPredicate
-    
-    do {
-      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
-      let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
-      labelText += "\(noteCount) \(notePluralized)"
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    todoCategoryLabel.text = labelText
+  // Goal count label
+  func makeLabel(count: Int, quantifier: String) -> String {
+    let quantifierPluralized = count == 1 ? quantifier : "\(quantifier)s"
+    return "\(count) \(quantifierPluralized)"
   }
   
-  func populateFixCategoryLabel() {
-    var labelText: String = ""
-
-    let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
-    goalFetchRequest.resultType = .countResultType
-    goalFetchRequest.predicate = fixGoalKeywordPredicate
-    
-    do {
-      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
-      let goalCount = goalCountResult.first!.intValue
-      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
-      labelText = "\(goalCount) \(goalPluralized) / "
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    
-    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
-    noteFetchRequest.resultType = .countResultType
-    noteFetchRequest.predicate = fixNoteKeywordPredicate
-    
-    do {
-      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
-      let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
-      labelText += "\(noteCount) \(notePluralized)"
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    fixCategoryLabel.text = labelText
+  // Note count label
+  func makeContinuingLabel(firstLabel: String, count: Int, quantifier: String) -> String {
+    let quantifierPluralized = count == 1 ? quantifier : "\(quantifier)s"
+    return firstLabel + " / \(count) \(quantifierPluralized)"
   }
   
-  func populatePastYearLabel() {
-    var labelText: String = ""
-    
-    let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
-    goalFetchRequest.resultType = .countResultType
-    goalFetchRequest.predicate = pastYearGoalPredicate
-    
-    do {
-      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
-      let goalCount = goalCountResult.first!.intValue
-      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
-      labelText = "\(goalCount) \(goalPluralized) / "
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    
-    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
-    noteFetchRequest.resultType = .countResultType
-    noteFetchRequest.predicate = pastYearNotePredicate
-    
-    do {
-      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
-      let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
-      labelText += "\(noteCount) \(notePluralized)"
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    pastYearLabel.text = labelText
-  }
-  
-  func populatePastMonthLabel() {
-    var labelText: String = ""
-
-    let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
-    goalFetchRequest.resultType = .countResultType
-    goalFetchRequest.predicate = pastMonthGoalPredicate
-    
-    do {
-      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
-      let goalCount = goalCountResult.first!.intValue
-      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
-      labelText = "\(goalCount) \(goalPluralized) / "
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-      
-    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
-    noteFetchRequest.resultType = .countResultType
-    noteFetchRequest.predicate = pastMonthNotePredicate
-      
-    do {
-      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
-      let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
-      labelText += "\(noteCount) \(notePluralized)"
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    pastMonthLabel.text = labelText
-  }
-  
-  func populatePastWeekLabel() {
-    var labelText: String = ""
-    
-    let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
-    goalFetchRequest.resultType = .countResultType
-    goalFetchRequest.predicate = pastWeekGoalPredicate
-    
-    do {
-      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
-      let goalCount = goalCountResult.first!.intValue
-      let goalPluralized = goalCount == 1 ? "Goal" : "Goals"
-      labelText = "\(goalCount) \(goalPluralized) / "
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    
-    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
-    noteFetchRequest.resultType = .countResultType
-    noteFetchRequest.predicate = pastWeekNotePredicate
-    
-    do {
-      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
-      let noteCount = noteCountResult.first!.intValue
-      let notePluralized = noteCount == 1 ? "Task" : "Tasks"
-      labelText += "\(noteCount) \(notePluralized)"
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    pastWeekLabel.text = labelText
-  }
-  
+  // Special Case Labels
   func populateTodayLabel() {
     let goalFetchRequest = NSFetchRequest<Goal>(entityName: "Goal")
     let createdAtDescriptor = NSSortDescriptor(keyPath: \Goal.goalDateCreated, ascending: false)
@@ -415,76 +348,10 @@ extension FilterViewController {
       let result = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
       let count = result.first!.notes.count
       let pluralized = count == 1 ? "Task" : "Tasks"
-      todoCategoryLabel.text = "1 Goal / \(count) \(pluralized)"
+      todayLabel.text = "1 Goal / \(count) \(pluralized)"
     } catch let error as NSError {
       print("count not fetched \(error), \(error.userInfo)")
     }
-  }
-  
-  func populateAllLabel() {
-    var allGoalCount: Int = 0
-    var allNoteCount: Int = 0
-    var doneGoalCount: Int = 0
-    var doneNoteCount: Int = 0
-    
-    
-    
-    var labelText: String = ""
-    
-    let goalFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
-    goalFetchRequest.resultType = .countResultType
-    goalFetchRequest.predicate = nil // allGoalPredicate
-    goalFetchRequest.fetchLimit = 0
-    
-    do {
-      let goalCountResult = try CoreDataController.shared.managedContext.fetch(goalFetchRequest)
-      allGoalCount = goalCountResult.first!.intValue
-      let goalPluralized = allGoalCount == 1 ? "Goal" : "Goals"
-      labelText = "\(allGoalCount) \(goalPluralized) / "
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    
-    let noteFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
-    noteFetchRequest.resultType = .countResultType
-    noteFetchRequest.predicate = nil // allGoalPredicate
-    noteFetchRequest.fetchLimit = 0
-    
-    do {
-      let noteCountResult = try CoreDataController.shared.managedContext.fetch(noteFetchRequest)
-      allNoteCount = noteCountResult.first!.intValue
-      let notePluralized = allNoteCount == 1 ? "Task" : "Tasks"
-      labelText += "\(allNoteCount) \(notePluralized) - "
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    
-    let goalCompletedFetchRequest = NSFetchRequest<NSNumber>(entityName: "Goal")
-    goalCompletedFetchRequest.resultType = .countResultType
-    goalCompletedFetchRequest.predicate = goalCompletedPredicate
-    
-    do {
-      let goalCompletedResult = try CoreDataController.shared.managedContext.fetch(goalCompletedFetchRequest)
-      doneGoalCount = goalCompletedResult.first!.intValue
-      let goalPluralized = doneGoalCount == 1 ? "Goal" : "Goals"
-      labelText += "\(doneGoalCount) \(goalPluralized) Completed / "
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    
-    let noteCompletedFetchRequest = NSFetchRequest<NSNumber>(entityName: "Note")
-    noteCompletedFetchRequest.resultType = .countResultType
-    noteCompletedFetchRequest.predicate = noteCompletedPredicate
-    
-    do {
-      let noteCompletedResult = try CoreDataController.shared.managedContext.fetch(noteCompletedFetchRequest)
-      doneNoteCount = noteCompletedResult.first!.intValue
-      let notePluralized = doneNoteCount == 1 ? "Task" : "Tasks"
-      labelText += "\(doneNoteCount) \(notePluralized) Completed"
-    } catch let error as NSError {
-      print("count not fetched \(error), \(error.userInfo)")
-    }
-    allLabel.text = labelText
   }
   
 }

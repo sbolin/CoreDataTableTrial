@@ -29,22 +29,23 @@ class CoreDataController {
     return container
   }()
   
-  // Fetch methods
-  lazy var fetchedGoalResultsController: NSFetchedResultsController<Goal> = {
-    let context = persistentContainer.viewContext
-    let request = Goal.goalFetchRequest()
-    let goalCreatedSort = NSSortDescriptor(keyPath: \Goal.goalDateCreated, ascending: false)
-    let noteCreatedSort = NSSortDescriptor(keyPath: \Note.noteDateCreated, ascending: false)
-    request.sortDescriptors = [noteCreatedSort, goalCreatedSort ]
-
-    let fetchedResultsController = NSFetchedResultsController(
-      fetchRequest: request,
-      managedObjectContext: context,
-      sectionNameKeyPath: "goalDateCreated",
-      cacheName: nil)
-    
-    return fetchedResultsController
-  }()
+// Fetch methods
+  
+//  lazy var fetchedGoalResultsController: NSFetchedResultsController<Goal> = {
+//    let context = persistentContainer.viewContext
+//    let request = Goal.goalFetchRequest()
+//    let goalCreatedSort = NSSortDescriptor(keyPath: \Goal.goalDateCreated, ascending: false)
+//    let noteCreatedSort = NSSortDescriptor(keyPath: \Note.noteDateCreated, ascending: false)
+//    request.sortDescriptors = [noteCreatedSort, goalCreatedSort ]
+//
+//    let fetchedResultsController = NSFetchedResultsController(
+//      fetchRequest: request,
+//      managedObjectContext: context,
+//      sectionNameKeyPath: "goalDateCreated",
+//      cacheName: nil)
+//
+//    return fetchedResultsController
+//  }()
   
   lazy var fetchedNoteResultsController: NSFetchedResultsController<Note> = {
     let context = persistentContainer.viewContext
@@ -80,10 +81,9 @@ class CoreDataController {
   }()
   
   func saveContext () {
-    let context = persistentContainer.viewContext
-    guard context.hasChanges else { return }
+    guard managedContext.hasChanges else { return }
     do {
-      try context.save()
+      try managedContext.save()
     } catch let error as NSError {
       print("Unresolved error \(error), \(error.localizedDescription)")
     }
@@ -182,7 +182,6 @@ class CoreDataController {
   }
   
   // create notes
-  //TODO: make json file and read in
   func createNotesIfNeeded() {
     
     // check if notes exist, if so return

@@ -10,8 +10,6 @@ import UIKit
 
 class GoalViewDelegate: NSObject, UITableViewDelegate {
   
-  let fetchController = CoreDataController.shared.fetchedGoalResultsController
-  
   //MARK: - UITableViewDelegate Methods
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     return 56

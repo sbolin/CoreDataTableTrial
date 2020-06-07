@@ -70,6 +70,7 @@ class NoteViewDataSource<Result: NSFetchRequestResult, Delegate: NoteViewDataSou
     return noteCell
   }
   
+  //MARK: - TableView editing methods
   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
     switch editingStyle {
     case .delete:

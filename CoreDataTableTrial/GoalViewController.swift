@@ -135,7 +135,6 @@ extension GoalViewController {
     guard let fetchRequest = fetchRequest else {
       return
     }
-    
     do {
       goals = try CoreDataController.shared.persistentContainer.viewContext.fetch(fetchRequest)
       tableView.reloadData()
